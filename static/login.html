@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Introducir preguntas en el Trivial">
+  <meta name="author" content="Juanjo Asensio García">
+  <title>Trivial - IES Riu Túria</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <!-- Custom css styles -->
+  <link href="static/css/sign-in.css" rel="stylesheet">
+  <script type="module" src="static/js/color-modes.js"></script>
+  <script src="static/js/sign-in.js"></script>
+</head>
+
+<body>
+  <!-- The header with the navbar -->
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top margin-bottom-100">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/favicon.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+          Trivial IES Riu Túria
+        </a>
+        <!-- A button that is showed when we are in small screen for collapse the navbar -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/new_question">Introducir preguntas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/modify_question">Modificar preguntas</a>
+            </li>
+            <!-- Change the language -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-translate"></i>
+                Cambiar idioma
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Castellano</a></li>
+                <li><a class="dropdown-item" href="#">Valencià</a></li>
+                <li><a class="dropdown-item" href="#">English</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <div class="dropdown color-modes">
+                <button class="
+                    btn btn-link
+                    px-0
+                    text-decoration-none
+                    dropdown-toggle
+                    d-flex
+                    align-items-center
+                  " id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown"
+                  data-bs-display="static">
+                  <i class="bi bi-circle-half theme-icon-active">
+                    <use href="bi-cercle-half"></use>
+                  </i>
+                  &nbsp;Cambiar tema
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme"
+                  style="--bs-dropdown-min-width: 8rem">
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                      <i class="bi bi-sun-fill"></i>
+                      &nbsp;Claro
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-sun-fill"></use>
+                      </svg>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                      <i class="bi bi-moon-stars-fill"></i>
+                      &nbsp;Oscuro
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-moon-stars-fill"></use>
+                      </svg>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center active"
+                      data-bs-theme-value="auto">
+                      <i class="bi bi-circle-half"></i>
+                      &nbsp;Automático
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-circle-half"></use>
+                      </svg>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- The sign-in form -->
+  <main class="form-signin w-100 m-auto flex-shrink-0 text-center">
+    <form name="loginForm" onsubmit="return validateForm()">
+      <img class="mt-4 mb-4" src="/favicon.ico" alt="Logo IES Riu Túria" width="134" height="75">
+      <h1 class="h3 mb-3 fw-normal">Iniciar sesión en el Trivial</h1>
+
+      <div class="form-floating">
+        <input type="email" class="form-control" id="username" placeholder="name@edu.gva.es">
+        <label for="email">Correo electrónico</label>
+        <div class="invalid-feedback">
+          Introduzca un correo electrónico valido
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="form-floating">
+          <input type="password" class="form-control" id="password" placeholder="Password">
+          <label for="password">Contraseña</label>
+          <div class="invalid-feedback">
+            Introduzca una contraseña valida
+          </div>
+        </div>
+        <button id="toggle-password" type="button" class="bi bi-eye"
+          aria-label="Show password as plain text. Warning: this will display your password on the screen."
+          onclick="changePasswordVisibility(this)">
+        </button>
+      </div>
+      <div class="checkbox mb-3">
+        <label>
+          <input type="checkbox" value="remember-me" id="guest" onchange="signAsGuest(this)"> Iniciar sesión como <strong>invitado</strong>
+        </label>
+      </div>
+
+      <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button>
+      <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
+    </form>
+
+    <div id="myModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Iniciar sesión como invitado</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Introduzca las credenciales acerca de usted: </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Iniciar sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
