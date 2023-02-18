@@ -24,7 +24,7 @@ impl ResponseError for ServiceError {
                 HttpResponse::InternalServerError().json("Internal Server Error, Please try later")
             }
             ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
-            ServiceError::Unauthorized => HttpResponse::Unauthorized().json("unauthorized")/*TemporaryRedirect().append_header(("Location", "http://localhost:8080/login")).finish()*/,
+            ServiceError::Unauthorized => HttpResponse::Unauthorized().json("unauthorized"), /*TemporaryRedirect().append_header(("Location", "http://localhost:8080/login")).finish()*/
         }
     }
 }

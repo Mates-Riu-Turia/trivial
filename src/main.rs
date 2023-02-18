@@ -1,7 +1,7 @@
 use actix_files::NamedFile;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::{get, middleware, web, App, HttpServer};
 use actix_web::Result;
+use actix_web::{get, middleware, web, App, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
