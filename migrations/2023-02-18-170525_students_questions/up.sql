@@ -10,6 +10,6 @@ CREATE TABLE students_questions (
     time INT(11) NOT NULL,
     image VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL,
-    verified BIT NOT NULL,
-    modified BIT NOT NULL
+    verified BOOLEAN NOT NULL,
+    modified BOOLEAN NOT NULL
 )DEFAULT CHARSET=utf8mb4;

@@ -5,6 +5,34 @@ use serde::{Deserialize, Serialize};
 // type alias to use in multiple places
 pub type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
+pub enum Gender {
+    Boy,
+    Girl,
+}
+
+impl Gender {
+    pub fn into_str(&self) -> String {
+        return match self {
+            Self::Boy => { String::from("B") },
+            Self::Girl => { String::from("G") },
+        };
+    }
+}
+
+pub enum Role {
+    Admin,
+    Teacher,
+}
+
+impl Role {
+    pub fn into_str(&self) -> String {
+        return match self {
+            Self::Admin => { String::from("A") },
+            Self::Teacher => { String::from("T") },
+        };
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = users)]
 pub struct User {
@@ -12,34 +40,38 @@ pub struct User {
     pub email: String,
     pub hash: String,
     pub created_at: chrono::NaiveDateTime,
+    pub gender: String,
+    pub role: String,
+
 }
 
 impl User {
-    pub fn from<S: Into<String>, T: Into<String>>(name: S, email: S, pwd: T) -> Self {
+    pub fn from<S: Into<String>, T: Into<String>>(name: S, email: S, pwd: T, gender: Gender, role: Role) -> Self {
         Self {
             name: name.into(),
             email: email.into(),
             hash: pwd.into(),
             created_at: chrono::Local::now().naive_local(),
+            gender: gender.into_str(),
+            role: role.into_str()    
         }
     }
 }
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
-#[diesel(table_name = preguntas)]
+#[diesel(table_name = questions)]
 pub struct Question {
-    pub codi_pregunta: i32,
-    pub assignatura: String,
-    pub nivell: i32,
-    pub text: String,
-    pub no_mostrar: i32,
-    pub respostes: String,
-    pub intents: i32,
-    pub temps: i32,
-    pub imatge: String,
-    pub data: chrono::NaiveDateTime,
-    pub verificada: i32,
-    pub modificada: i32,
+    pub subject: String,
+    pub level: i32,
+    pub question: String,
+    pub hide: i32,
+    pub answers: String,
+    pub tries: i32,
+    pub time: i32,
+    pub image: String,
+    pub created_at: chrono::NaiveDateTime,
+    pub verified: bool,
+    pub modified: bool,
 }
 
 impl Question {
@@ -47,27 +79,26 @@ impl Question {
         id: S,
         subject: T,
         level: S,
-        text: T,
-        not_show: S,
-        answer: T,
-        attempts: S,
+        question: T,
+        hide: S,
+        answers: T,
+        tries: S,
         time: S,
         image: T,
-        verified: S,
+        verified: bool,
     ) -> Self {
         Self {
-            codi_pregunta: id.into(),
-            assignatura: subject.into(),
-            nivell: level.into(),
-            text: text.into(),
-            no_mostrar: not_show.into(),
-            respostes: answer.into(),
-            intents: attempts.into(),
-            temps: time.into(),
-            imatge: image.into(),
-            data: chrono::Local::now().naive_local(),
-            verificada: verified.into(),
-            modificada: 0,
+            subject: subject.into(),
+            level: level.into(),
+            question: question.into(),
+            hide: hide.into(),
+            answers: answers.into(),
+            tries: tries.into(),
+            time: time.into(),
+            image: image.into(),
+            created_at: chrono::Local::now().naive_local(),
+            verified,
+            modified: false,
         }
     }
 }

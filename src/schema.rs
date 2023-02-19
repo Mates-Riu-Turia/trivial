@@ -40,8 +40,8 @@ diesel::table! {
         time -> Integer,
         image -> Varchar,
         created_at -> Timestamp,
-        verified -> Bit,
-        modified -> Bit,
+        verified -> Bool,
+        modified -> Bool,
     }
 }
 
@@ -58,8 +58,8 @@ diesel::table! {
         time -> Integer,
         image -> Varchar,
         created_at -> Timestamp,
-        verified -> Bit,
-        modified -> Bit,
+        verified -> Bool,
+        modified -> Bool,
     }
 }
 
