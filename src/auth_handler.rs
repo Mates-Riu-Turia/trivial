@@ -5,13 +5,33 @@ use futures::future::{err, ok, Ready};
 use serde::{Deserialize, Serialize};
 
 use crate::error::ServiceError;
-use crate::models::{Pool, User};
+use crate::models::{Pool, User, Course};
 use crate::util::verify;
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct AuthData {
+pub struct AuthDataUser {
     pub email: String,
     pub password: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AuthDataGuest {
+    pub teacher_email: String,
+    pub name: String,
+    pub course: String,
+    pub class: String,
+    pub subject: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum AuthData {
+    User(AuthDataUser),
+    Guest(AuthDataGuest),
+}
+#[derive(Debug, Deserialize, Serialize)]
+pub enum AuthToken {
+    User(AuthUser),
+    Guest(AuthGuest),
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -21,15 +41,31 @@ pub struct AuthUser {
     pub expires_at: chrono::NaiveDateTime,
 }
 
-impl FromRequest for AuthUser {
+#[derive(Debug, Deserialize, Serialize)]
+pub struct AuthGuest {
+    pub teacher_email: String,
+    pub name: String,
+    pub course: String,
+    pub class: String,
+    pub subject: String,
+    pub expires_at: chrono::NaiveDateTime,
+}
+
+
+impl FromRequest for AuthToken {
     type Error = Error;
-    type Future = Ready<Result<AuthUser, Error>>;
+    type Future = Ready<Result<AuthToken, Error>>;
 
     fn from_request(req: &HttpRequest, pl: &mut Payload) -> Self::Future {
         if let Ok(identity) = Identity::from_request(req, pl).into_inner() {
             if let Some(user_json) = identity.identity() {
-                if let Ok(user) = serde_json::from_str::<AuthUser>(&user_json) {
-                    if user.expires_at > chrono::Local::now().naive_local() {
+                if let Ok(user) = serde_json::from_str::<AuthToken>(&user_json) {
+                    let expires_at = match &user {
+                        AuthToken::User(auth_user) => auth_user.expires_at,
+                        AuthToken::Guest(auth_user) => auth_user.expires_at,
+                    };
+
+                    if expires_at > chrono::Local::now().naive_local() {
                         return ok(user);
                     }
                 }
@@ -49,21 +85,30 @@ pub async fn login(
     id: Identity,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    let user = web::block(move || query(auth_data.into_inner(), pool)).await??;
+    let user = match auth_data.into_inner() {
+        AuthData::User(user) => {
+            web::block(move || query_user(user, pool)).await??
+        },
+        AuthData::Guest(guest) => { 
+            web::block(move || query_guest(guest, pool)).await??
+        }
+    };
 
     let user_string = serde_json::to_string(&user)?;
+
     id.remember(user_string);
 
     Ok(HttpResponse::Ok().finish())
 }
 
-pub async fn get_me(logged_user: AuthUser) -> HttpResponse {
+pub async fn get_me(logged_user: AuthToken) -> HttpResponse {
     HttpResponse::Ok().json(logged_user)
 }
 
 /// Diesel query
-fn query(auth_data: AuthData, pool: web::Data<Pool>) -> Result<AuthUser, ServiceError> {
+fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToken, ServiceError> {
     use crate::schema::users::dsl::{email, users};
+
     let mut conn = pool.get()?;
     let mut items = users
         .filter(email.eq(&auth_data.email))
@@ -72,13 +117,55 @@ fn query(auth_data: AuthData, pool: web::Data<Pool>) -> Result<AuthUser, Service
     if let Some(user) = items.pop() {
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
-                return Ok(AuthUser {
+                return Ok(AuthToken::User(AuthUser{
                     name: user.name,
                     email: user.email,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
-                });
+                }));
             }
         }
     }
+    Err(ServiceError::Unauthorized)
+}
+
+fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthToken, ServiceError> {
+    use crate::schema::courses::dsl::{courses, id};
+
+    let mut conn = pool.get()?;
+    let courses_id = format!("{}-{}", auth_data.course, auth_data.class);
+    let mut items = courses
+    .filter(id.eq(courses_id))
+    .load::<Course>(&mut conn)?;
+
+    if let Some(course) = items.pop() {
+        let subject = match auth_data.teacher_email.as_str() {
+            "anatomia" => course.anatomia,
+            "english" => course.english,
+            "biologia" => course.biologia,
+            "castellano" => course.castellano,
+            "clasica" => course.clasica,
+            "dibuix" => course.dibuix,
+            "ed_fisica" => course.ed_fisica,
+            "filosofia" => course.filosofia,
+            "fisica_quimica" => course.fisica_quimica,
+            "frances" => course.frances,
+            "historia" => course.historia,
+            "grec" => course.grec,
+            "informatica" => course.informatica,
+            "literatura" => course.literatura,
+            _ => return Err(ServiceError::Unauthorized),
+        }; 
+        if subject == Some(auth_data.teacher_email.clone()) {
+           return Ok(AuthToken::Guest(AuthGuest {
+            teacher_email: auth_data.teacher_email,
+            name: auth_data.name,
+            class: auth_data.class,
+            course: auth_data.course,
+            subject: auth_data.subject,
+            expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
+           })); 
+        }
+    }
+
     Err(ServiceError::Unauthorized)
 }

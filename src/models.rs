@@ -5,34 +5,6 @@ use serde::{Deserialize, Serialize};
 // type alias to use in multiple places
 pub type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
 
-pub enum Gender {
-    Boy,
-    Girl,
-}
-
-impl Gender {
-    pub fn into_str(&self) -> String {
-        return match self {
-            Self::Boy => { String::from("B") },
-            Self::Girl => { String::from("G") },
-        };
-    }
-}
-
-pub enum Role {
-    Admin,
-    Teacher,
-}
-
-impl Role {
-    pub fn into_str(&self) -> String {
-        return match self {
-            Self::Admin => { String::from("A") },
-            Self::Teacher => { String::from("T") },
-        };
-    }
-}
-
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = users)]
 pub struct User {
@@ -42,18 +14,17 @@ pub struct User {
     pub created_at: chrono::NaiveDateTime,
     pub gender: String,
     pub role: String,
-
 }
 
 impl User {
-    pub fn from<S: Into<String>, T: Into<String>>(name: S, email: S, pwd: T, gender: Gender, role: Role) -> Self {
+    pub fn from<S: Into<String>, T: Into<String>>(name: S, email: S, pwd: T, gender: S, role: S) -> Self {
         Self {
             name: name.into(),
             email: email.into(),
             hash: pwd.into(),
             created_at: chrono::Local::now().naive_local(),
-            gender: gender.into_str(),
-            role: role.into_str()    
+            gender: gender.into(),
+            role: role.into()    
         }
     }
 }
@@ -76,7 +47,6 @@ pub struct Question {
 
 impl Question {
     pub fn from<S: Into<i32>, T: Into<String>>(
-        id: S,
         subject: T,
         level: S,
         question: T,
@@ -101,4 +71,33 @@ impl Question {
             modified: false,
         }
     }
+}
+
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[diesel(table_name = courses)]
+pub struct Course {
+    pub id: String,
+    pub anatomia: Option<String>,
+    pub english: Option<String>,
+    pub biologia: Option<String>,
+    pub castellano: Option<String>,
+    pub clasica: Option<String>,
+    pub dibuix: Option<String>,
+    pub ed_fisica: Option<String>,
+    pub filosofia: Option<String>,
+    pub fisica_quimica: Option<String>,
+    pub frances: Option<String>,
+    pub historia: Option<String>,
+    pub grec: Option<String>,
+    pub informatica: Option<String>,
+    pub literatura: Option<String>,
+    pub llati: Option<String>,
+    pub mates: Option<String>,
+    pub musica: Option<String>,
+    pub orientacio: Option<String>,
+    pub plastica: Option<String>,
+    pub religio: Option<String>,
+    pub tecnologia: Option<String>,
+    pub valencia: Option<String>,
+    pub etica: Option<String>,
 }

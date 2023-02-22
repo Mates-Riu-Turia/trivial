@@ -14,7 +14,7 @@ async fn publish_favicon() -> Result<NamedFile> {
 }
 
 #[get("/")]
-async fn publish_index(logged_user: auth_handler::AuthUser) -> Result<NamedFile> {
+async fn publish_index(_logged_user: auth_handler::AuthToken) -> Result<NamedFile> {
     let path = PathBuf::from("static/index.html");
     Ok(NamedFile::open(path)?)
 }

@@ -48,10 +48,10 @@ function validateForm() {
             return true;
         },
         values: function() {
-            return JSON.stringify({
+            return JSON.stringify({User: {
                 email: this.email.value,
                 password: this.password.value
-            })
+            }})
         }
     };
 
@@ -64,6 +64,8 @@ function validateForm() {
         user.modal.show()
     }
     
+    alert(user.values());
+
     fetch("http://localhost:8080/api/auth", {
         method: "POST",
         headers: {
@@ -81,7 +83,7 @@ function validateForm() {
             window.location = "http://localhost:8080"
         }
         else {
-            alert("Server Error!, try it again later")
+            //alert("Server Error!, try it again later")
         }
       })
 
