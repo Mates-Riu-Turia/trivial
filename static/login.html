@@ -112,7 +112,7 @@
 
   <!-- The sign-in form -->
   <main class="form-signin w-100 m-auto flex-shrink-0 text-center">
-    <form name="loginForm" onsubmit="return validateForm()">
+    <form name="loginForm" action="javascript:void(0)" onsubmit="return validateForm()">
       <img class="mt-4 mb-4" src="/favicon.ico" alt="Logo IES Riu Túria" width="134" height="75">
       <h1 class="h3 mb-3 fw-normal">Iniciar sesión en el Trivial</h1>
 
@@ -120,7 +120,7 @@
         <input type="email" class="form-control" id="username" placeholder="name@edu.gva.es">
         <label for="email">Correo electrónico</label>
         <div class="invalid-feedback">
-          Introduzca un correo electrónico valido
+          Introduzca un correo electrónico válido
         </div>
       </div>
       <div class="input-group">
@@ -128,7 +128,7 @@
           <input type="password" class="form-control" id="password" placeholder="Password">
           <label for="password">Contraseña</label>
           <div class="invalid-feedback">
-            Introduzca una contraseña valida
+            Introduzca una contraseña válida
           </div>
         </div>
         <button id="toggle-password" type="button" class="bi bi-eye"
@@ -148,7 +148,7 @@
     </form>
 
     <!-- A modal for logging as a guest -->
-    <div id="myModal" class="modal fade" tabindex="-1">
+    <div id="guestModal" class="modal fade" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
@@ -157,10 +157,13 @@
           </div>
           <div class="modal-body">
             <p>Introduzca las credenciales acerca de usted: </p>
-            <form action="">
+            <form name="loginGuest" action="">
               <div class="form-floating">
                 <input type="email" class="form-control" id="guest-name" placeholder="">
                 <label for="email">Nombre Completo</label>
+                <div class="invalid-feedback">
+                  Introduzca un nombre válido
+                </div>
               </div>
               <select class="form-select" id="guest-course">
                 <option value="" selected>Elija su curso</option>
@@ -210,7 +213,25 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-primary">Iniciar sesión</button>
+            <button type="button" class="btn btn-primary" onclick="guestLogin()">Iniciar sesión</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- A modal that is show when the guest login fails -->
+    <div id="guestModalError" class="modal fade" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Error al iniciar sesión como invitado</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Algún dato introducido anteriormente no es válido</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">OK</button>
           </div>
         </div>
       </div>

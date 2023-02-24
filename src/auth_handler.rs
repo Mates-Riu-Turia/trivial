@@ -138,7 +138,7 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
     .load::<Course>(&mut conn)?;
 
     if let Some(course) = items.pop() {
-        let subject = match auth_data.teacher_email.as_str() {
+        let subject = match auth_data.subject.as_str() {
             "anatomia" => course.anatomia,
             "english" => course.english,
             "biologia" => course.biologia,
@@ -153,6 +153,15 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
             "grec" => course.grec,
             "informatica" => course.informatica,
             "literatura" => course.literatura,
+            "llati" => course.llati,
+            "mates" => course.mates,
+            "musica" => course.musica,
+            "orientacio" => course.orientacio,
+            "plastica" => course.plastica,
+            "religio" => course.religio,
+            "tecnologia" => course.tecnologia,
+            "valencia" => course.valencia,
+            "etica" => course.etica,
             _ => return Err(ServiceError::Unauthorized),
         }; 
         if subject == Some(auth_data.teacher_email.clone()) {

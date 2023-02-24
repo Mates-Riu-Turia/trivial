@@ -20,13 +20,74 @@ function signAsGuest(checkBox) {
     }
 }
 
+function guestLogin() {
+    let guest = {
+        teacher_email: document.forms["loginForm"]["username"],
+        name: document.forms["loginGuest"]["guest-name"],
+        course: document.forms["loginGuest"]["guest-course"],
+        class: document.forms["loginGuest"]["guest-class"],
+        subject: document.forms["loginGuest"]["guest-subject"],
+        modalError: new bootstrap.Modal("#guestModalError"),
+        reset: function () {
+            this.name.classList = "form-control"
+            for (i=1; i<=3; i++) {
+                 document.forms["loginGuest"][i].classList = "form-select"
+            }
+        },
+        verify: function () {
+            this.reset()
+            let status = true
+            for (i=0; i<=3; i++) {
+                if (document.forms["loginGuest"][i].value == "") {
+                    document.forms["loginGuest"][i].classList.add("is-invalid")
+                    status = false
+                }
+            } 
+            return status           
+        },
+        values: function () {
+            return JSON.stringify({Guest: {
+                teacher_email: this.teacher_email.value,
+                name: this.name.value,
+                course: this.course.value,
+                class: this.class.value,
+                subject: this.subject.value,
+            }})
+        }
+    }
+    
+    if (!guest.verify()) {
+        return false
+    }
+
+    fetch("http://localhost:8080/api/auth", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: guest.values()
+    }).then((response) => {
+        if (response.status == 401) {
+            guest.modalError.show()
+        }
+        else if (response.ok) {
+            window.location = "http://localhost:8080"
+        }
+        else {
+            alert("Server Error!, try it again later")
+        }
+      })
+
+      return false
+} 
+
 function validateForm() {
     let user = {
         email: document.forms["loginForm"]["username"],
         password: document.forms["loginForm"]["password"],
         pass_btn: document.getElementById("toggle-password").style,
         guest: document.forms["loginForm"]["guest"].checked,
-        modal: new bootstrap.Modal("#myModal"),
+        modal: new bootstrap.Modal("#guestModal"),
         reset: function() {
             this.email.classList = "form-control"
             this.password.classList = "form-control"
@@ -45,7 +106,7 @@ function validateForm() {
 
                 return false
             }
-            return true;
+            return true
         },
         values: function() {
             return JSON.stringify({User: {
@@ -62,10 +123,9 @@ function validateForm() {
 
     if (user.guest) {
         user.modal.show()
+        return false
     }
     
-    alert(user.values());
-
     fetch("http://localhost:8080/api/auth", {
         method: "POST",
         headers: {
@@ -83,7 +143,7 @@ function validateForm() {
             window.location = "http://localhost:8080"
         }
         else {
-            //alert("Server Error!, try it again later")
+            alert("Server Error!, try it again later")
         }
       })
 
