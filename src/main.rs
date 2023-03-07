@@ -43,6 +43,19 @@ async fn publish_sign_in_js() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/static/css/index.css")]
+async fn publish_index_css() -> Result<NamedFile> {
+    let path = PathBuf::from("static/css/index.css");
+    Ok(NamedFile::open(path)?)
+}
+
+#[get("/static/js/sign-off.js")]
+async fn publish_sign_off_js() -> Result<NamedFile> {
+    let path = PathBuf::from("static/js/sign-off.js");
+    Ok(NamedFile::open(path)?)
+}
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config = Config::new("./config.json");
@@ -97,6 +110,8 @@ async fn main() -> std::io::Result<()> {
             .service(publish_color_modes_js)
             .service(publish_sign_in_css)
             .service(publish_sign_in_js)
+            .service(publish_index_css)
+            .service(publish_sign_off_js)
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?
     .run()

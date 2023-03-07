@@ -14,8 +14,9 @@
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
   <!-- Custom css styles -->
-  <link href="static/css/sign-in.css" rel="stylesheet">
+  <link href="static/css/index.css" rel="stylesheet">
   <script type="module" src="static/js/color-modes.js"></script>
+  <script src="static/js/sign-off.js"></script>
 </head>
 
 <body>
@@ -101,7 +102,25 @@
                   </li>
                 </ul>
               </div>
-
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                &nbsp;Mi perfil
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item" id="menu-name"></li>
+                <li class="dropdown-divider"></li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" onclick="changePassword()"><i
+                      class="bi bi-key"></i>&nbsp;Modificar contraseña</button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" onclick="logout()"><i
+                      class="bi bi-box-arrow-right"></i>&nbsp;Cerrar sesión</button>
+                </li>
+              </ul>
             </li>
           </ul>
         </div>
@@ -109,36 +128,29 @@
     </nav>
   </header>
 
-  <!-- The sign-in form -->
-  <main class="form-signin w-100 m-auto flex-shrink-0 text-center">
-    <form name="loginForm" onsubmit="return validateForm()">
-      <img class="mt-4 mb-4" src="/favicon.ico" alt="Logo IES Riu Túria" width="134" height="75">
-      <h1 class="h3 mb-3 fw-normal">Iniciar sesión en el Trivial Prueba</h1>
+  <main>
+    <h1 id="welcome"></h1>
+    <div id="button-group" class="button-group"></div>
 
-      <div class="form-floating">
-        <input type="email" class="form-control" id="username" placeholder="name@edu.gva.es">
-        <label for="email">Correo electrónico</label>
-        <div class="invalid-feedback">
-          Introduzca un correo electrónico valido
-        </div>
-      </div>
-      <div class="input-group">
-        <div class="form-floating">
-          <input type="password" class="form-control" id="password" placeholder="Password">
-          <label for="password">Contraseña</label>
-          <div class="invalid-feedback">
-            Introduzca una contraseña valida
+    <!-- Change password modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar contraseña de inicio de sesión</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            Introduzca la nueva contraseña, luego introduzcala de nuevo para confirmar: 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary">Guardar cambios</button>
           </div>
         </div>
-        <button id="toggle-password" type="button" class="bi bi-eye"
-          aria-label="Show password as plain text. Warning: this will display your password on the screen."
-          onclick="changePasswordVisibility(this)">
-        </button>
       </div>
+    </div>
 
-      <button class="w-100 btn btn-lg btn-primary" type="submit">Iniciar sesión</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
-    </form>
   </main>
 </body>
 

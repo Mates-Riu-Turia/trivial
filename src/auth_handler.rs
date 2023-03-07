@@ -38,6 +38,7 @@ pub enum AuthToken {
 pub struct AuthUser {
     pub name: String,
     pub email: String,
+    pub gender: String,
     pub expires_at: chrono::NaiveDateTime,
 }
 
@@ -77,7 +78,7 @@ impl FromRequest for AuthToken {
 
 pub async fn logout(id: Identity) -> HttpResponse {
     id.forget();
-    HttpResponse::Ok().finish()
+    HttpResponse::Ok().json("")
 }
 
 pub async fn login(
@@ -120,6 +121,7 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
                 return Ok(AuthToken::User(AuthUser{
                     name: user.name,
                     email: user.email,
+                    gender: user.gender,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
                 }));
             }
