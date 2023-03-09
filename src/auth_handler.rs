@@ -52,6 +52,10 @@ pub struct AuthGuest {
     pub expires_at: chrono::NaiveDateTime,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct NewPassword {
+    pub password: String,
+}
 
 impl FromRequest for AuthToken {
     type Error = Error;
@@ -104,6 +108,14 @@ pub async fn login(
 
 pub async fn get_me(logged_user: AuthToken) -> HttpResponse {
     HttpResponse::Ok().json(logged_user)
+}
+
+pub async fn modify_password(logged_user: AuthToken, password: web::Json<NewPassword>, pool: web::Data<Pool>) -> Result<HttpResponse, actix_web::Error> {
+    if let AuthToken::User(user) = logged_user {
+        web::block(move || query_modify_password(user, password.into_inner(), pool)).await??;
+        return Ok(HttpResponse::Ok().json(""));
+    }
+    Err(ServiceError::Unauthorized.into())
 }
 
 /// Diesel query
@@ -179,4 +191,14 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
     }
 
     Err(ServiceError::Unauthorized)
+}
+
+fn query_modify_password(auth_data: AuthUser, password: NewPassword, pool: web::Data<Pool>) -> Result<(), ServiceError> {
+    use crate::schema::users::dsl::{email, hash, users};
+
+    let mut conn = pool.get()?;
+
+    diesel::update(users.filter(email.eq(auth_data.email))).set(hash.eq(crate::util::hash_password(&password.password)?)).execute(&mut conn)?;
+
+    Ok(())
 }

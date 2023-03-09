@@ -101,7 +101,8 @@ async fn main() -> std::io::Result<()> {
                         web::resource("/auth")
                             .route(web::post().to(auth_handler::login))
                             .route(web::delete().to(auth_handler::logout))
-                            .route(web::get().to(auth_handler::get_me)),
+                            .route(web::get().to(auth_handler::get_me))
+                            .route(web::patch().to(auth_handler::modify_password)),
                     ),
             )
             .service(publish_favicon)

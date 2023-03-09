@@ -66,3 +66,14 @@ body {
       font-size: 1.3em;
     }
   }
+
+  .toogle-password {
+    position: absolute;
+    top: 25%;
+    right: 5%;
+    z-index: 9;
+    width: 28px;
+    height: 30px;
+    background: 0;
+    border: 0;
+  }
