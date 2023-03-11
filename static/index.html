@@ -113,8 +113,8 @@
                 <li class="dropdown-item" id="menu-name"></li>
                 <li class="dropdown-divider"></li>
                 <li>
-                  <button type="button" class="dropdown-item d-flex align-items-center" id="modifyPasswordOption" onclick="changePassword()"><i
-                      class="bi bi-key"></i>&nbsp;Modificar contraseña</button>
+                  <button type="button" class="dropdown-item d-flex align-items-center" id="modifyPasswordOption"
+                    onclick="changePassword()"><i class="bi bi-key"></i>&nbsp;Modificar contraseña</button>
                 </li>
                 <li>
                   <button type="button" class="dropdown-item d-flex align-items-center" onclick="logout()"><i
@@ -133,7 +133,8 @@
     <div id="button-group" class="button-group"></div>
 
     <!-- Change password modal -->
-    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+      aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -141,8 +142,8 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-             <p>Introduzca la nueva contraseña, luego introduzcala de nuevo para confirmar:</p>
-             <form name="modifyPasswordForm">
+            <p>Introduzca la nueva contraseña, luego introduzcala de nuevo para confirmar:</p>
+            <form name="modifyPasswordForm">
               <div class="input-group">
                 <div class="form-floating">
                   <input type="password" class="form-control" id="password" placeholder="Password">
@@ -168,8 +169,8 @@
                   aria-label="Show password as plain text. Warning: this will display your password on the screen."
                   onclick="changePasswordVisibility(this, 1)">
                 </button>
-              </div>                
-             </form>
+              </div>
+            </form>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
@@ -179,24 +180,39 @@
       </div>
     </div>
 
-        <!-- Change password success -->
-        <div class="modal fade" id="changePasswordSuccessModal" tabindex="-1" aria-labelledby="changePasswordSuccessModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="changePasswordSuccessModalLabel">¡Correcto!</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                 <p>Su contraseña de inicio de sesión se actualizó correctamente</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
-              </div>
-            </div>
+    <!-- Change password success -->
+    <div class="modal fade" id="changePasswordSuccessModal" tabindex="-1"
+      aria-labelledby="changePasswordSuccessModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="changePasswordSuccessModalLabel">¡Correcto!</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Su contraseña de inicio de sesión se actualizó correctamente. <br>Los cambios surgirán efecto la próxima
+              vez que inicie sesión.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
           </div>
         </div>
-    
+      </div>
+    </div>
+
+    <!-- Password not changed toast-->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Cambiar contraseña</strong>
+          <small>Ahora</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          Recomendamos encarecidamente que cambie su contraseña pues la contraseña predeterminada no es segura.
+        </div>
+      </div>
+    </div>
   </main>
 </body>
 

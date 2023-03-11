@@ -90,6 +90,9 @@ function name(data) {
   if (data.User != undefined) {
     divElement2.innerHTML = data.User.name
     div.innerHTML = '<button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>'
+    if (data.User.password_changed == false) {
+      new bootstrap.Toast("#liveToast").show()
+    }
     if (data.User.gender == "B") {
       divElement.innerHTML = "Bienvenido " + data.User.name
     }
