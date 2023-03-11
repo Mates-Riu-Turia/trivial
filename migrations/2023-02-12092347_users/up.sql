@@ -4,5 +4,6 @@ CREATE TABLE users (
     hash VARCHAR(122) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     gender VARCHAR(1) NOT NULL,
-    role VARCHAR(1) NOT NULL
+    role VARCHAR(1) NOT NULL,
+    password_changed BOOLEAN NOT NULL
 );

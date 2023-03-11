@@ -40,6 +40,7 @@ pub struct AuthUser {
     pub email: String,
     pub gender: String,
     pub expires_at: chrono::NaiveDateTime,
+    pub password_changed: bool,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -135,6 +136,7 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
                     email: user.email,
                     gender: user.gender,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
+                    password_changed: user.password_changed
                 }));
             }
         }
@@ -194,11 +196,11 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
 }
 
 fn query_modify_password(auth_data: AuthUser, password: NewPassword, pool: web::Data<Pool>) -> Result<(), ServiceError> {
-    use crate::schema::users::dsl::{email, hash, users};
+    use crate::schema::users::dsl::{email, hash, users, password_changed};
 
     let mut conn = pool.get()?;
 
-    diesel::update(users.filter(email.eq(auth_data.email))).set(hash.eq(crate::util::hash_password(&password.password)?)).execute(&mut conn)?;
+    diesel::update(users.filter(email.eq(auth_data.email))).set((hash.eq(crate::util::hash_password(&password.password)?), password_changed.eq(true))).execute(&mut conn)?;
 
     Ok(())
 }

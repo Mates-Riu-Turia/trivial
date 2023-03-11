@@ -14,17 +14,19 @@ pub struct User {
     pub created_at: chrono::NaiveDateTime,
     pub gender: String,
     pub role: String,
+    pub password_changed: bool,
 }
 
 impl User {
-    pub fn from<S: Into<String>, T: Into<String>>(name: S, email: S, pwd: T, gender: S, role: S) -> Self {
+    pub fn from<S: Into<String>>(name: S, email: S, pwd: S, gender: S, role: S) -> Self {
         Self {
             name: name.into(),
             email: email.into(),
             hash: pwd.into(),
             created_at: chrono::Local::now().naive_local(),
             gender: gender.into(),
-            role: role.into()    
+            role: role.into(),
+            password_changed: false,
         }
     }
 }

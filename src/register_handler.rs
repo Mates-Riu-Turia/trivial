@@ -39,7 +39,7 @@ fn query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), crate::error:
 
     let mut conn = pool.get()?;
     let password: String = hash_password(&user_data.password)?;
-    let user = User::from(&user_data.name, &user_data.email, password, &user_data.gender, &user_data.role);
+    let user = User::from(&user_data.name, &user_data.email, &password, &user_data.gender, &user_data.role);
     return match diesel::insert_into(users).values(&user).execute(&mut conn) {
         Ok(_) => Ok(()),
         Err(_) => Err(crate::error::ServiceError::InternalServerError)

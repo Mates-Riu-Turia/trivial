@@ -71,6 +71,7 @@ diesel::table! {
         created_at -> Timestamp,
         gender -> Varchar,
         role -> Varchar,
+        password_changed -> Bool,
     }
 }
 
