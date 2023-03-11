@@ -49,9 +49,9 @@ async fn publish_index_css() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
-#[get("/static/js/sign-off.js")]
-async fn publish_sign_off_js() -> Result<NamedFile> {
-    let path = PathBuf::from("static/js/sign-off.js");
+#[get("/static/js/index.js")]
+async fn publish_index_js() -> Result<NamedFile> {
+    let path = PathBuf::from("static/js/index.js");
     Ok(NamedFile::open(path)?)
 }
 
@@ -112,7 +112,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_sign_in_css)
             .service(publish_sign_in_js)
             .service(publish_index_css)
-            .service(publish_sign_off_js)
+            .service(publish_index_js)
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?
     .run()
