@@ -89,7 +89,6 @@ pub struct StudentQuestion {
     pub answers: String,
     pub tries: i32,
     pub time: i32,
-    pub image: String,
     pub created_at: chrono::NaiveDateTime,
 }
 
@@ -103,7 +102,6 @@ impl StudentQuestion {
         answers: T,
         tries: S,
         time: S,
-        image: T,
     ) -> Self {
         Self {
             course_creator: course_creator.into(),
@@ -114,7 +112,6 @@ impl StudentQuestion {
             answers: answers.into(),
             tries: tries.into(),
             time: time.into(),
-            image: image.into(),
             created_at: chrono::Local::now().naive_local(),
         }
     }

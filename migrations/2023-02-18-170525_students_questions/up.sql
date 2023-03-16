@@ -7,6 +7,5 @@ CREATE TABLE students_questions (
     answers VARCHAR(50) NOT NULL,
     tries INT(11) NOT NULL,
     time INT(11) NOT NULL,
-    image VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL
 )DEFAULT CHARSET=utf8mb4;

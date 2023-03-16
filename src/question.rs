@@ -51,7 +51,6 @@ pub struct StudentQuestionData {
     pub answers: String,
     pub tries: i32,
     pub time: i32,
-    pub image: String,
 }
 
 impl StudentQuestionData {
@@ -65,7 +64,6 @@ impl StudentQuestionData {
             self.answers,
             self.tries,
             self.time,
-            self.image,
         )
     }
 }

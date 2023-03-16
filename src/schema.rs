@@ -56,7 +56,6 @@ diesel::table! {
         answers -> Varchar,
         tries -> Integer,
         time -> Integer,
-        image -> Varchar,
         created_at -> Timestamp,
     }
 }
