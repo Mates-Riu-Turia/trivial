@@ -39,6 +39,7 @@ pub struct AuthUser {
     pub name: String,
     pub email: String,
     pub gender: String,
+    pub role: String,
     pub expires_at: chrono::NaiveDateTime,
     pub password_changed: bool,
 }
@@ -135,6 +136,7 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
                     name: user.name,
                     email: user.email,
                     gender: user.gender,
+                    role: user.role,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
                     password_changed: user.password_changed
                 }));
