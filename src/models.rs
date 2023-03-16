@@ -45,6 +45,7 @@ pub struct Question {
     pub created_at: chrono::NaiveDateTime,
     pub verified: bool,
     pub modified: bool,
+    pub creator: String,
 }
 
 impl Question {
@@ -58,6 +59,7 @@ impl Question {
         time: S,
         image: T,
         verified: bool,
+        creator: T,
     ) -> Self {
         Self {
             subject: subject.into(),
@@ -71,9 +73,53 @@ impl Question {
             created_at: chrono::Local::now().naive_local(),
             verified,
             modified: false,
+            creator: creator.into(),
         }
     }
 }
+
+#[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
+#[diesel(table_name = students_questions)]
+pub struct StudentQuestion {
+    pub course_creator: String,
+    pub name_creator: String,
+    pub subject: String,
+    pub level: i32,
+    pub question: String,
+    pub answers: String,
+    pub tries: i32,
+    pub time: i32,
+    pub image: String,
+    pub created_at: chrono::NaiveDateTime,
+}
+
+impl StudentQuestion {
+    pub fn from<S: Into<i32>, T: Into<String>>(
+        course_creator: T,
+        name_creator: T,
+        subject: T,
+        level: S,
+        question: T,
+        answers: T,
+        tries: S,
+        time: S,
+        image: T,
+    ) -> Self {
+        Self {
+            course_creator: course_creator.into(),
+            name_creator: name_creator.into(),
+            subject: subject.into(),
+            level: level.into(),
+            question: question.into(),
+            answers: answers.into(),
+            tries: tries.into(),
+            time: time.into(),
+            image: image.into(),
+            created_at: chrono::Local::now().naive_local(),
+        }
+    }
+}
+
 
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = courses)]

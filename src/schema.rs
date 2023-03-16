@@ -42,6 +42,7 @@ diesel::table! {
         created_at -> Timestamp,
         verified -> Bool,
         modified -> Bool,
+        creator -> Nullable<Varchar>,
     }
 }
 
@@ -52,14 +53,11 @@ diesel::table! {
         subject -> Varchar,
         level -> Integer,
         question -> Varchar,
-        hide -> Integer,
         answers -> Varchar,
         tries -> Integer,
         time -> Integer,
         image -> Varchar,
         created_at -> Timestamp,
-        verified -> Bool,
-        modified -> Bool,
     }
 }
 

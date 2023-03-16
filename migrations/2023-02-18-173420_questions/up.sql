@@ -9,5 +9,6 @@ CREATE TABLE questions (
     image VARCHAR(100) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     verified BOOLEAN NOT NULL,
-    modified BOOLEAN NOT NULL
+    modified BOOLEAN NOT NULL,
+    creator VARCHAR(100)
 )DEFAULT CHARSET=utf8mb4;
