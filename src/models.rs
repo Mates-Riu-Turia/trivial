@@ -117,7 +117,6 @@ impl StudentQuestion {
     }
 }
 
-
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = courses)]
 pub struct Course {

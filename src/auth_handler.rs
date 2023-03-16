@@ -5,7 +5,7 @@ use futures::future::{err, ok, Ready};
 use serde::{Deserialize, Serialize};
 
 use crate::error::ServiceError;
-use crate::models::{Pool, User, Course};
+use crate::models::{Course, Pool, User};
 use crate::util::verify;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -93,12 +93,8 @@ pub async fn login(
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let user = match auth_data.into_inner() {
-        AuthData::User(user) => {
-            web::block(move || query_user(user, pool)).await??
-        },
-        AuthData::Guest(guest) => { 
-            web::block(move || query_guest(guest, pool)).await??
-        }
+        AuthData::User(user) => web::block(move || query_user(user, pool)).await??,
+        AuthData::Guest(guest) => web::block(move || query_guest(guest, pool)).await??,
     };
 
     let user_string = serde_json::to_string(&user)?;
@@ -112,7 +108,11 @@ pub async fn get_me(logged_user: AuthToken) -> HttpResponse {
     HttpResponse::Ok().json(logged_user)
 }
 
-pub async fn modify_password(logged_user: AuthToken, password: web::Json<NewPassword>, pool: web::Data<Pool>) -> Result<HttpResponse, actix_web::Error> {
+pub async fn modify_password(
+    logged_user: AuthToken,
+    password: web::Json<NewPassword>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, actix_web::Error> {
     if let AuthToken::User(user) = logged_user {
         web::block(move || query_modify_password(user, password.into_inner(), pool)).await??;
         return Ok(HttpResponse::Ok().json(""));
@@ -132,13 +132,13 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
     if let Some(user) = items.pop() {
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
-                return Ok(AuthToken::User(AuthUser{
+                return Ok(AuthToken::User(AuthUser {
                     name: user.name,
                     email: user.email,
                     gender: user.gender,
                     role: user.role,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
-                    password_changed: user.password_changed
+                    password_changed: user.password_changed,
                 }));
             }
         }
@@ -152,8 +152,8 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
     let mut conn = pool.get()?;
     let courses_id = format!("{}-{}", auth_data.course, auth_data.class);
     let mut items = courses
-    .filter(id.eq(courses_id))
-    .load::<Course>(&mut conn)?;
+        .filter(id.eq(courses_id))
+        .load::<Course>(&mut conn)?;
 
     if let Some(course) = items.pop() {
         let subject = match auth_data.subject.as_str() {
@@ -181,28 +181,37 @@ fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthTo
             "valencia" => course.valencia,
             "etica" => course.etica,
             _ => return Err(ServiceError::Unauthorized),
-        }; 
+        };
         if subject == Some(auth_data.teacher_email.clone()) {
-           return Ok(AuthToken::Guest(AuthGuest {
-            teacher_email: auth_data.teacher_email,
-            name: auth_data.name,
-            class: auth_data.class,
-            course: auth_data.course,
-            subject: auth_data.subject,
-            expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
-           })); 
+            return Ok(AuthToken::Guest(AuthGuest {
+                teacher_email: auth_data.teacher_email,
+                name: auth_data.name,
+                class: auth_data.class,
+                course: auth_data.course,
+                subject: auth_data.subject,
+                expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
+            }));
         }
     }
 
     Err(ServiceError::Unauthorized)
 }
 
-fn query_modify_password(auth_data: AuthUser, password: NewPassword, pool: web::Data<Pool>) -> Result<(), ServiceError> {
-    use crate::schema::users::dsl::{email, hash, users, password_changed};
+fn query_modify_password(
+    auth_data: AuthUser,
+    password: NewPassword,
+    pool: web::Data<Pool>,
+) -> Result<(), ServiceError> {
+    use crate::schema::users::dsl::{email, hash, password_changed, users};
 
     let mut conn = pool.get()?;
 
-    diesel::update(users.filter(email.eq(auth_data.email))).set((hash.eq(crate::util::hash_password(&password.password)?), password_changed.eq(true))).execute(&mut conn)?;
+    diesel::update(users.filter(email.eq(auth_data.email)))
+        .set((
+            hash.eq(crate::util::hash_password(&password.password)?),
+            password_changed.eq(true),
+        ))
+        .execute(&mut conn)?;
 
     Ok(())
 }

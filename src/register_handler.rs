@@ -12,7 +12,7 @@ pub struct UserData {
     pub email: String,
     pub password: String,
     pub gender: String,
-    pub role: String
+    pub role: String,
 }
 
 pub async fn register_user(
@@ -23,11 +23,9 @@ pub async fn register_user(
 
     if !(user_data.gender == String::from("B") || user_data.gender == String::from("G")) {
         return Err(actix_web::error::ErrorBadRequest("Missing gender"));
-    }
-    else if !(user_data.role == String::from("A") || user_data.role == String::from("T")) {
+    } else if !(user_data.role == String::from("A") || user_data.role == String::from("T")) {
         return Err(actix_web::error::ErrorBadRequest("Missing role"));
     }
-
 
     let user = web::block(move || query(user_data, pool)).await??;
 
@@ -39,9 +37,15 @@ fn query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), crate::error:
 
     let mut conn = pool.get()?;
     let password: String = hash_password(&user_data.password)?;
-    let user = User::from(&user_data.name, &user_data.email, &password, &user_data.gender, &user_data.role);
+    let user = User::from(
+        &user_data.name,
+        &user_data.email,
+        &password,
+        &user_data.gender,
+        &user_data.role,
+    );
     return match diesel::insert_into(users).values(&user).execute(&mut conn) {
         Ok(_) => Ok(()),
-        Err(_) => Err(crate::error::ServiceError::InternalServerError)
+        Err(_) => Err(crate::error::ServiceError::InternalServerError),
     };
 }

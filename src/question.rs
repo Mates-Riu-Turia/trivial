@@ -54,7 +54,11 @@ pub struct StudentQuestionData {
 }
 
 impl StudentQuestionData {
-    pub fn to_question_model(self, course_creator: String, name_creator: String) -> StudentQuestion {
+    pub fn to_question_model(
+        self,
+        course_creator: String,
+        name_creator: String,
+    ) -> StudentQuestion {
         StudentQuestion::from(
             course_creator,
             name_creator,
@@ -85,18 +89,23 @@ pub async fn new_question(
                 }
                 let question = question.to_question_model(auth_data.email);
                 web::block(move || new_question_query(question, pool)).await??;
-            }
-            else {
-                return Err(ServiceError::BadRequest("Unexpected question format".to_string()).into());
+            } else {
+                return Err(
+                    ServiceError::BadRequest("Unexpected question format".to_string()).into(),
+                );
             }
         }
         AuthToken::Guest(auth_data) => {
             if let QuestionData::Guest(question) = question {
-                let question = question.to_question_model(format!("{}-{}", auth_data.course, auth_data.class), auth_data.name);
+                let question = question.to_question_model(
+                    format!("{}-{}", auth_data.course, auth_data.class),
+                    auth_data.name,
+                );
                 web::block(move || new_student_question_query(question, pool)).await??;
-            }
-            else {
-                return Err(ServiceError::BadRequest("Unexpected question format".to_string()).into());
+            } else {
+                return Err(
+                    ServiceError::BadRequest("Unexpected question format".to_string()).into(),
+                );
             }
         }
     };

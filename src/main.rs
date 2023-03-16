@@ -5,7 +5,7 @@ use actix_web::{get, middleware, web, App, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
-use trivial_packager::{auth_handler, config::Config, models, register_handler, question};
+use trivial_packager::{auth_handler, config::Config, models, question, register_handler};
 
 #[get("/favicon.ico")]
 async fn publish_favicon() -> Result<NamedFile> {
@@ -54,7 +54,6 @@ async fn publish_index_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/index.js");
     Ok(NamedFile::open(path)?)
 }
-
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -105,9 +104,8 @@ async fn main() -> std::io::Result<()> {
                             .route(web::patch().to(auth_handler::modify_password)),
                     )
                     .service(
-                        web::resource("/question")
-                            .route(web::post().to(question::new_question))
-                    ) 
+                        web::resource("/question").route(web::post().to(question::new_question)),
+                    ),
             )
             .service(publish_favicon)
             .service(publish_index)
