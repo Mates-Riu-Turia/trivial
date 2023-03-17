@@ -120,6 +120,8 @@ function resize(role_guest) {
     buttons_array[i].style.width = elemWidth + "px"
   }
 }
-window.addEventListener('resize', () => resize(), false)
 
-let data = fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (name(data)))
+if (window.location == "http://localhost:8080/") {
+  window.addEventListener('resize', () => resize(), false)
+  let data = fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (name(data)))
+}
