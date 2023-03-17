@@ -25,6 +25,12 @@ async fn publish_login_html() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/add_question")]
+async fn publish_add_question_html(_logged_user: auth_handler::AuthToken) -> Result<NamedFile> {
+    let path = PathBuf::from("static/add_question.html");
+    Ok(NamedFile::open(path)?)
+}
+
 #[get("/static/js/color-modes.js")]
 async fn publish_color_modes_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/color-modes.js");
@@ -46,6 +52,12 @@ async fn publish_sign_in_js() -> Result<NamedFile> {
 #[get("/static/css/index.css")]
 async fn publish_index_css() -> Result<NamedFile> {
     let path = PathBuf::from("static/css/index.css");
+    Ok(NamedFile::open(path)?)
+}
+
+#[get("/static/css/add_question.css")]
+async fn publish_add_question_css() -> Result<NamedFile> {
+    let path = PathBuf::from("static/css/add_question.css");
     Ok(NamedFile::open(path)?)
 }
 
@@ -110,10 +122,12 @@ async fn main() -> std::io::Result<()> {
             .service(publish_favicon)
             .service(publish_index)
             .service(publish_login_html)
+            .service(publish_add_question_html)
             .service(publish_color_modes_js)
             .service(publish_sign_in_css)
             .service(publish_sign_in_js)
             .service(publish_index_css)
+            .service(publish_add_question_css)
             .service(publish_index_js)
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?

@@ -89,7 +89,7 @@ function name(data) {
 
   if (data.User != undefined) {
     divElement2.innerHTML = data.User.name
-    div.innerHTML = '<button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>'
+    div.innerHTML = `<button onclick="window.location.href='http://localhost:8080/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
     if (data.User.password_changed == false) {
       new bootstrap.Toast("#liveToast").show()
     }
@@ -103,7 +103,7 @@ function name(data) {
   else {
     modifyPassword.style.cssText = "display: none !important;"
     divElement2.innerHTML = data.Guest.name
-    div.innerHTML = '<button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>'
+    div.innerHTML = `<button onclick="window.location.href='http://localhost:8080/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
     divElement.innerHTML = "Bienvenido/a " + data.Guest.name
   }
   resize()

@@ -1,16 +1,13 @@
 html,
 body {
-  position: relative;
   height: 100%;
-  width: 100%;
 }
 
 body {
   display: flex;
-  position: absolute;
   align-items: center;
-  bottom: 20%;
-  justify-content: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
   background-color: #0000;
 }
 
@@ -41,29 +38,7 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-#welcome {
-    text-align: center;
-}
-
-.button-group-element {
-    text-align: center;
-    position: absolute;
-    height: 40%;
-}
-
-@media screen and (min-width: 707px) {
-    .button-group-element {
-      font-size: 2em;
-    }
-  }
-  
-@media screen and (max-width: 706px) {
-    .button-group-element {
-      font-size: 1.3em;
-    }
-  }
-
-  .toogle-password {
+.toogle-password {
     position: absolute;
     top: 25%;
     right: 5%;
