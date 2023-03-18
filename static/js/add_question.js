@@ -88,6 +88,9 @@ function slide_previous() {
     }
 }
 
+function update_time(timebar) {
+    document.getElementById("timebarLabel").innerHTML = timebar.value + " Segundos"
+}
 
 fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
 

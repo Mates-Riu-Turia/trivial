@@ -240,9 +240,9 @@
     <!-- Add question form (Upload) -->
     <form class="d-none" id="questionUpload">
       <div class="mb-3 d-flex">
-        <label for="customRange1" class="form-label">Tiempo para responder</label>
-        <input type="range" class="form-range" id="customRange1" min="20" max="150" value="30">
-        <label for="customRange1">30 Segundos</label>
+        <label for="timebar" class="form-label">Tiempo para responder</label>
+        <input type="range" class="form-range" id="timebar" min="20" max="150" value="30" onchange="update_time(this)">
+        <label for="timebar" id="timebarLabel">30 Segundos</label>
       </div>
       <div class="form-check form-switch mb-3" id="hide">
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
