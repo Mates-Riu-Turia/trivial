@@ -135,7 +135,7 @@
     <div class="position-relative mb-5 mt-5">
       <div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="50" aria-valuemin="0"
         aria-valuemax="100" style="height: 1px">
-        <div class="progress-bar" style="width: 0%"></div>
+        <div class="progress-bar" style="width: 0%" id="progressbar"></div>
       </div>
       <button type="button" class="
           position-absolute
@@ -144,7 +144,7 @@
           translate-middle
           btn btn-sm btn-primary
           rounded-pill
-        " style="width: 2rem; height: 2rem">
+        " style="width: 2rem; height: 2rem" id="progress1">
         1
       </button>
       <button type="button" class="
@@ -154,7 +154,7 @@
           translate-middle
           btn btn-sm btn-secondary
           rounded-pill
-        " style="width: 2rem; height: 2rem">
+        " style="width: 2rem; height: 2rem" id="progress2">
         2
       </button>
       <button type="button" class="
@@ -164,13 +164,13 @@
           translate-middle
           btn btn-sm btn-secondary
           rounded-pill
-        " style="width: 2rem; height: 2rem">
+        " style="width: 2rem; height: 2rem" id="progress3">
         3
       </button>
     </div>
 
     <!-- Add question form (Main Data) -->
-    <form>
+    <form id="questionMain">
       <div class="form-floating mb-3">
         <select class="form-select" id="subject">
           <option value="anatomia">Anatomia Aplicada</option>
@@ -227,7 +227,7 @@
     </form>
 
     <!-- Add question form (Image) -->
-    <form class="d-none">
+    <form class="d-none" id="questionImage">
       <div class="form-floating mb-3">
         <div class="input-group mb-3">
           <input type="file" class="form-control" id="inputGroupFile01">
@@ -238,7 +238,7 @@
     </form>
 
     <!-- Add question form (Upload) -->
-    <form class="d-none">
+    <form class="d-none" id="questionUpload">
       <div class="mb-3 d-flex">
         <label for="customRange1" class="form-label">Tiempo para responder</label>
         <input type="range" class="form-range" id="customRange1" min="20" max="150" value="30">
@@ -261,9 +261,9 @@
 
     <!-- Button group (Next and Discard) -->
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-outline-primary" disabled><i class="bi bi-arrow-left"></i> Anterior</i></button>
+      <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i class="bi bi-arrow-left"></i> Anterior</i></button>
       <button type="button" class="btn btn-outline-danger" onclick="window.location = 'http://localhost:8080/'">Descartar pregunta <i class="bi bi-trash"></i></button>
-      <button type="button" class="btn btn-outline-primary">Siguiente <i class="bi bi-arrow-right"></i></button>
+      <button type="button" class="btn btn-outline-primary" onclick="slide_next()" id="nextButton">Siguiente <i class="bi bi-arrow-right"></i></button>
     </div>
 
     <!-- Change password modal -->
