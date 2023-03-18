@@ -17,6 +17,7 @@
   <link href="static/css/add_question.css" rel="stylesheet">
   <script type="module" src="static/js/color-modes.js"></script>
   <script src="static/js/index.js"></script>
+  <script src="static/js/add_question.js"></script>
 </head>
 
 <body>
@@ -243,11 +244,11 @@
         <input type="range" class="form-range" id="customRange1" min="20" max="150" value="30">
         <label for="customRange1">30 Segundos</label>
       </div>
-      <div class="form-check form-switch mb-3">
+      <div class="form-check form-switch mb-3" id="hide">
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
         <label class="form-check-label" for="flexSwitchCheckChecked">¿Mostrar la respuesta al fallar la pregunta?</label>
       </div>      
-      <div class="form-check form-switch mb-3">
+      <div class="form-check form-switch mb-3" id="verify">
         <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked" checked>
         <label class="form-check-label" for="flexSwitchCheckChecked">¿Verificar la pregunta para mostrarla en el Trivial?</label>
       </div>     
@@ -260,7 +261,7 @@
 
     <!-- Button group (Next and Discard) -->
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Anterior</i></button>
+      <button type="button" class="btn btn-outline-primary" disabled><i class="bi bi-arrow-left"></i> Anterior</i></button>
       <button type="button" class="btn btn-outline-danger">Descartar pregunta <i class="bi bi-trash"></i></button>
       <button type="button" class="btn btn-outline-primary">Siguiente <i class="bi bi-arrow-right"></i></button>
     </div>

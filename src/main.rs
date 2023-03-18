@@ -67,6 +67,12 @@ async fn publish_index_js() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/static/js/add_question.js")]
+async fn publish_add_question_js() -> Result<NamedFile> {
+    let path = PathBuf::from("static/js/add_question.js");
+    Ok(NamedFile::open(path)?)
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config = Config::new("./config.json");
@@ -129,6 +135,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_index_css)
             .service(publish_add_question_css)
             .service(publish_index_js)
+            .service(publish_add_question_js)
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?
     .run()
