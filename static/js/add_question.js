@@ -3,6 +3,7 @@ let form_page = 1
 let is_guest = false
 
 function adapt(data) {
+    let subject = document.getElementById("subject").classList;
     let verify = document.getElementById("verify").classList;
     let hide = document.getElementById("hide").classList;
 
@@ -14,6 +15,7 @@ function adapt(data) {
     else {
         verify.add("d-none")
         hide.add("d-none")
+        subject.add("d-none")
         is_guest = true
     }
 }
