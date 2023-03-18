@@ -17,7 +17,7 @@
   <link href="static/css/add_question.css" rel="stylesheet">
   <script type="module" src="static/js/color-modes.js"></script>
   <script src="static/js/index.js"></script>
-  <script src="static/js/add_question.js"></script>
+  <script src="static/js/add_question.js" defer></script>
 </head>
 
 <body>
@@ -212,7 +212,10 @@
       </div>
       <div class="input-group mb-3">
         <textarea class="form-control overflow-auto" aria-label="With textarea"
-          placeholder="Introduzca la pregunta, a ser posible multirespuesta" rows="4"></textarea>
+          placeholder="Introduzca la pregunta, a ser posible multirespuesta" rows="4" id="question"></textarea>
+        <div class="invalid-feedback">
+          Introduzca una pregunta
+        </div>
       </div>
       <ul class="list-group">
         <li class="list-group-item d-flex">

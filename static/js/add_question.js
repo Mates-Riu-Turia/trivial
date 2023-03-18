@@ -2,6 +2,23 @@ let form_page = 1
 
 let is_guest = false
 
+let mainForm = {
+    subject: document.getElementById("subject"),
+    level: document.getElementById("level"),
+    question: document.getElementById("question"),
+    reset: function () {
+        this.question.classList = "form-control overflow-auto"
+    },
+    verify: function () {
+        this.reset()
+        if (this.question.value == "") {
+            this.question.classList = "form-control overflow-auto is-invalid"
+            return false
+        }
+        return true
+    }
+};
+
 function adapt(data) {
     let subject = document.getElementById("subject").classList;
     let verify = document.getElementById("verify").classList;
@@ -26,10 +43,10 @@ function slide_next() {
     let progressbar = document.getElementById("progressbar")
     let progress2 = document.getElementById("progress2")
     let progress3 = document.getElementById("progress3")
-    
+
     let questionMain = document.getElementById("questionMain")
     let questionImage = document.getElementById("questionImage")
-    let questionUpload = document.getElementById("questionUpload")    
+    let questionUpload = document.getElementById("questionUpload")
 
     previousButton.disabled = false
 
@@ -42,20 +59,24 @@ function slide_next() {
         questionUpload.classList = ""
     }
     else if (is_guest) {
-        nextButton.disabled = true
-        form_page = 3
-        progressbar.style.width = "100%"
-        progress2.classList = "position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill"
-        progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-primary rounded-pill"
-        questionMain.classList = "d-none"
-        questionUpload.classList = ""
+        if (mainForm.verify()) {
+            nextButton.disabled = true
+            form_page = 3
+            progressbar.style.width = "100%"
+            progress2.classList = "position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill"
+            progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-primary rounded-pill"
+            questionMain.classList = "d-none"
+            questionUpload.classList = ""
+        }
     }
     else {
-        form_page++
-        progressbar.style.width = "50%"
-        progress2.classList = "position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill"
-        questionMain.classList = "d-none"
-        questionImage.classList = ""
+        if (mainForm.verify()) {
+            form_page++
+            progressbar.style.width = "50%"
+            progress2.classList = "position-absolute top-0 start-50 translate-middle btn btn-sm btn-primary rounded-pill"
+            questionMain.classList = "d-none"
+            questionImage.classList = ""
+        }
     }
 }
 
@@ -65,10 +86,10 @@ function slide_previous() {
     let progressbar = document.getElementById("progressbar")
     let progress2 = document.getElementById("progress2")
     let progress3 = document.getElementById("progress3")
-    
+
     let questionMain = document.getElementById("questionMain")
     let questionImage = document.getElementById("questionImage")
-    let questionUpload = document.getElementById("questionUpload")    
+    let questionUpload = document.getElementById("questionUpload")
 
     if (form_page == 2 || is_guest) {
         form_page = 1
@@ -79,7 +100,7 @@ function slide_previous() {
         progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill"
         questionImage.classList = "d-none"
         questionMain.classList = ""
-    }    
+    }
     else {
         form_page = 2
         nextButton.disabled = false
