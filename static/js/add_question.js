@@ -14,3 +14,7 @@ function  adapt(data) {
 }
 
 fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
+
+window.onbeforeunload = function () {
+    return true
+}
