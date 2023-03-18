@@ -6,13 +6,20 @@ let mainForm = {
     subject: document.getElementById("subject"),
     level: document.getElementById("level"),
     question: document.getElementById("question"),
+    answerTable: document.getElementById("answerTable"),
+    answerInput: document.getElementById("answerInput"),
     reset: function () {
         this.question.classList = "form-control overflow-auto"
+        this.answerInput.classList = "form-control"
     },
     verify: function () {
         this.reset()
         if (this.question.value == "") {
             this.question.classList = "form-control overflow-auto is-invalid"
+            return false
+        }
+        if (this.answerTable.innerHTML == "") {
+            this.answerInput.classList = "form-control is-invalid"
             return false
         }
         return true
@@ -99,6 +106,7 @@ function slide_previous() {
         progress2.classList = "position-absolute top-0 start-50 translate-middle btn btn-sm btn-secondary rounded-pill"
         progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill"
         questionImage.classList = "d-none"
+        questionUpload.classList = "d-none"
         questionMain.classList = ""
     }
     else {
@@ -113,6 +121,23 @@ function slide_previous() {
 
 function update_time(timebar) {
     document.getElementById("timebarLabel").innerHTML = timebar.value + " Segundos"
+}
+
+function add_answer() {
+    let answerInput = document.getElementById("answerInput")
+    let answerTable = document.getElementById("answerTable")
+
+    answerInput.classList = "form-control"
+
+    if (answerInput.value == "") {
+        answerInput.classList = "form-control is-invalid"
+    }
+    else {
+        answerTable.innerHTML += '<li class="list-group-item d-flex">' + answerInput.value +  `<button
+        type="button" class="btn btn-danger position-absolute top-50 end-0 translate-middle-y h-100" onclick="this.parentNode.remove()">
+        <i class="bi bi-trash"></i>
+        </button></li>`
+    }
 }
 
 fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (adapt(data)))

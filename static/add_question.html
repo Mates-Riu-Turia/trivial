@@ -217,15 +217,13 @@
           Introduzca una pregunta
         </div>
       </div>
-      <ul class="list-group">
-        <li class="list-group-item d-flex">
-          Un gugol
-          <button type="button" class="btn btn-danger position-absolute top-50 end-0 translate-middle-y h-100"><i class="bi bi-trash"></i></button>
-        </li>
-      </ul>
+      <ul class="list-group" id="answerTable"></ul>
       <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Introduzca una posible respuesta" aria-label="" aria-describedby="button-addon2">
-        <button class="btn btn-outline-success" type="button" id="button-addon2">Añadir <i class="bi bi-check"></i></button>
+        <input type="text" class="form-control" placeholder="Introduzca una posible respuesta" id="answerInput">
+        <button class="btn btn-outline-success" type="button" onclick="add_answer()">Añadir <i class="bi bi-check"></i></button>
+        <div class="invalid-feedback">
+          Introduzca una respuesta
+        </div>
       </div>      
     </form>
 
