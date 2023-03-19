@@ -45,7 +45,6 @@ impl TeacherQuestionData {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StudentQuestionData {
-    pub subject: String,
     pub level: i32,
     pub question: String,
     pub answers: String,
@@ -58,11 +57,12 @@ impl StudentQuestionData {
         self,
         course_creator: String,
         name_creator: String,
+        subject: String,
     ) -> StudentQuestion {
         StudentQuestion::from(
             course_creator,
             name_creator,
-            self.subject,
+            subject,
             self.level,
             self.question,
             self.answers,
@@ -100,6 +100,7 @@ pub async fn new_question(
                 let question = question.to_question_model(
                     format!("{}-{}", auth_data.course, auth_data.class),
                     auth_data.name,
+                    auth_data.subject
                 );
                 web::block(move || new_student_question_query(question, pool)).await??;
             } else {
