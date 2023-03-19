@@ -2,9 +2,11 @@ let form_page = 1
 
 let is_guest = false
 
+let question_saved = false
+
 let mainForm = {
-    subject: document.getElementById("subject"),
-    level: document.getElementById("level"),
+    subject: document.getElementById("subject").value,
+    level: document.getElementById("level").value,
     question: document.getElementById("question"),
     answerTable: document.getElementById("answerTable"),
     answerInput: document.getElementById("answerInput"),
@@ -23,6 +25,74 @@ let mainForm = {
             return false
         }
         return true
+    },
+    answers: function () {
+        let answers = Array.from(this.answerTable.childNodes)
+        let answersString;
+
+        for (i = 0; i < answers.length; i++) {
+            if (i == 0) {
+                answersString = answers[i].getAttribute("data-value")
+            }
+            else {
+                answersString += ";" + answers[i].getAttribute("data-value")
+            }
+        }
+
+        return answersString
+    }
+};
+
+let uploadForm = {
+    timebar: document.getElementById("timebar").value,
+    hide: document.getElementById("hide"),
+    verify: document.getElementById("verify"),
+    tries: document.getElementById("tries").value,
+};
+
+let questionForm = {
+    valuesGuest: function () {
+        return JSON.stringify({
+            Guest: {
+                level: parseInt(mainForm.level),
+                question: mainForm.question.value.replace(/(\n)+/g, '<br>'),
+                answers: mainForm.answers(),
+                tries: parseInt(uploadForm.tries),
+                time: parseInt(uploadForm.timebar),
+            }
+        })
+    },
+    valuesTeacher: function () {
+        return JSON.stringify({
+            Teacher: {
+                subject: mainForm.subject,
+                level: parseInt(mainForm.level),
+                question: mainForm.question.value.replace(/(\n)+/g, '<br>'),
+                hide: !uploadForm.hide.checked,
+                answers: mainForm.answers(),
+                tries: parseInt(uploadForm.tries),
+                time: parseInt(uploadForm.timebar),
+                image: "",
+                verified: uploadForm.verify.checked
+            }
+        })
+    },
+    upload: function () {
+        fetch("http://localhost:8080/api/question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: (is_guest ? this.valuesGuest() : this.valuesTeacher())
+        }).then((response) => {
+            if (response.ok) {
+                question_saved = true
+                window.location = "http://localhost:8080/"
+            }
+            else {
+                alert("Server Error!, try again later")
+            }
+        })
     }
 };
 
@@ -133,15 +203,16 @@ function add_answer() {
         answerInput.classList = "form-control is-invalid"
     }
     else {
-        answerTable.innerHTML += '<li class="list-group-item d-flex">' + answerInput.value +  `<button
+        answerTable.innerHTML += '<li class="list-group-item d-flex" data-value="' + answerInput.value + '">' + answerInput.value + `<button
         type="button" class="btn btn-danger position-absolute top-50 end-0 translate-middle-y h-100" onclick="this.parentNode.remove()">
         <i class="bi bi-trash"></i>
         </button></li>`
+        answerInput.value = ""
     }
 }
 
 fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
 
 window.onbeforeunload = function () {
-    return true
+    return (question_saved ? null : true)
 }
