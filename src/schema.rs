@@ -34,7 +34,7 @@ diesel::table! {
         subject -> Varchar,
         level -> Integer,
         question -> Varchar,
-        hide -> Integer,
+        hide -> Bool,
         answers -> Varchar,
         tries -> Integer,
         time -> Integer,
@@ -72,4 +72,9 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(courses, questions, students_questions, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+    courses,
+    questions,
+    students_questions,
+    users,
+);

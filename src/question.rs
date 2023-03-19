@@ -18,7 +18,7 @@ pub struct TeacherQuestionData {
     pub subject: String,
     pub level: i32,
     pub question: String,
-    pub hide: i32,
+    pub hide: bool,
     pub answers: String,
     pub tries: i32,
     pub time: i32,
