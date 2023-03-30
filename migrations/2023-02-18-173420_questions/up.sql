@@ -7,6 +7,7 @@ CREATE TABLE questions (
     tries INT(11) NOT NULL,
     time INT(11) NOT NULL,
     image VARCHAR(100) NOT NULL,
+    bigger BOOLEAN NOT NULL,
     created_at TIMESTAMP NOT NULL,
     verified BOOLEAN NOT NULL,
     modified BOOLEAN NOT NULL,

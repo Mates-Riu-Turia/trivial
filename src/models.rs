@@ -42,6 +42,7 @@ pub struct Question {
     pub tries: i32,
     pub time: i32,
     pub image: String,
+    pub bigger: bool,
     pub created_at: chrono::NaiveDateTime,
     pub verified: bool,
     pub modified: bool,
@@ -58,6 +59,7 @@ impl Question {
         tries: S,
         time: S,
         image: T,
+        bigger: bool,
         verified: bool,
         creator: T,
     ) -> Self {
@@ -70,6 +72,7 @@ impl Question {
             tries: tries.into(),
             time: time.into(),
             image: image.into(),
+            bigger,
             created_at: chrono::Local::now().naive_local(),
             verified,
             modified: false,

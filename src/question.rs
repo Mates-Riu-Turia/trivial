@@ -23,6 +23,7 @@ pub struct TeacherQuestionData {
     pub tries: i32,
     pub time: i32,
     pub image: String,
+    pub bigger: bool,
     pub verified: bool,
 }
 
@@ -37,6 +38,7 @@ impl TeacherQuestionData {
             self.tries,
             self.time,
             self.image,
+            self.bigger,
             self.verified,
             creator,
         )

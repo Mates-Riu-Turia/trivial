@@ -73,6 +73,7 @@ let questionForm = {
                 tries: parseInt(uploadForm.tries),
                 time: parseInt(uploadForm.timebar),
                 image: "",
+                bigger: false,
                 verified: uploadForm.verify.checked
             }
         })
@@ -104,6 +105,7 @@ function adapt(data) {
     if (data.User != undefined) {
         if (data.User.role == "T") {
             verify.add("d-none")
+            uploadForm.verify.checked = false
         }
     }
     else {

@@ -39,6 +39,7 @@ diesel::table! {
         tries -> Integer,
         time -> Integer,
         image -> Varchar,
+        bigger -> Bool,
         created_at -> Timestamp,
         verified -> Bool,
         modified -> Bool,
