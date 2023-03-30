@@ -220,20 +220,26 @@
       <ul class="list-group" id="answerTable"></ul>
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Introduzca una posible respuesta" id="answerInput">
-        <button class="btn btn-outline-success" type="button" onclick="add_answer()">Añadir <i class="bi bi-check"></i></button>
+        <button class="btn btn-outline-success" type="button" onclick="add_answer()">Añadir <i
+            class="bi bi-check"></i></button>
         <div class="invalid-feedback">
           Introduzca una respuesta
         </div>
-      </div>      
+      </div>
     </form>
 
     <!-- Add question form (Image) -->
     <form class="d-none" id="questionImage">
       <div class="form-floating mb-3">
         <div class="input-group mb-3">
-          <input type="file" class="form-control" id="inputGroupFile01">
+          <input type="file" class="form-control mb-3" id="inputGroupFile01">
           <!-- The place for showing a preview of the image -->
           <div></div>
+        </div>
+        <!-- Show bigger -->
+        <div class="form-check form-switch mb-3">
+          <input class="form-check-input" type="checkbox" role="switch" id="big">
+          <label class="form-check-label" for="big">¿Hacer que la imagen ocupe todo el tablero?</label>
         </div>
       </div>
     </form>
@@ -245,26 +251,30 @@
         <input type="range" class="form-range" id="timebar" min="20" max="150" value="30" onchange="update_time(this)">
         <label for="timebar" id="timebarLabel">30 Segundos</label>
       </div>
-      <div class="form-check form-switch mb-3">
+      <div class="form-check form-switch mb-3" id="hideAll">
         <input class="form-check-input" type="checkbox" role="switch" id="hide" checked>
         <label class="form-check-label" for="hide">¿Mostrar la respuesta al fallar la pregunta?</label>
-      </div>      
-      <div class="form-check form-switch mb-3">
+      </div>
+      <div class="form-check form-switch mb-3" id="verifyAll">
         <input class="form-check-input" type="checkbox" role="switch" id="verify" checked>
         <label class="form-check-label" for="verify">¿Verificar la pregunta para mostrarla en el Trivial?</label>
-      </div>     
+      </div>
       <div class="mb-3">
         <label for="tries" class="form-label">Número de intentos</label>
         <input type="number" class="form-control" id="tries" min="1" max="3" value="1">
-      </div>       
-      <button type="button" class="btn btn-outline-success w-100 mb-3" onclick="questionForm.upload()">Introducir pregunta <i class="bi bi-box-seam"></i></button>
+      </div>
+      <button type="button" class="btn btn-outline-success w-100 mb-3" onclick="questionForm.upload()">Introducir
+        pregunta <i class="bi bi-box-seam"></i></button>
     </form>
 
     <!-- Button group (Next and Discard) -->
     <div class="btn-group" role="group">
-      <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i class="bi bi-arrow-left"></i> Anterior</i></button>
-      <button type="button" class="btn btn-outline-danger" onclick="window.location = 'http://localhost:8080/'">Descartar pregunta <i class="bi bi-trash"></i></button>
-      <button type="button" class="btn btn-outline-primary" onclick="slide_next()" id="nextButton">Siguiente <i class="bi bi-arrow-right"></i></button>
+      <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i
+          class="bi bi-arrow-left"></i> Anterior</i></button>
+      <button type="button" class="btn btn-outline-danger"
+        onclick="window.location = 'http://localhost:8080/'">Descartar pregunta <i class="bi bi-trash"></i></button>
+      <button type="button" class="btn btn-outline-primary" onclick="slide_next()" id="nextButton">Siguiente <i
+          class="bi bi-arrow-right"></i></button>
     </div>
 
     <!-- Change password modal -->
@@ -350,4 +360,5 @@
     </div>
   </main>
 </body>
+
 </html>

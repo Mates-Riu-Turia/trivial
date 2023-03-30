@@ -98,8 +98,8 @@ let questionForm = {
 
 function adapt(data) {
     let subject = document.getElementById("subject").classList;
-    let verify = document.getElementById("verify").classList;
-    let hide = document.getElementById("hide").classList;
+    let verify = document.getElementById("verifyAll").classList;
+    let hide = document.getElementById("hideAll").classList;
 
     if (data.User != undefined) {
         if (data.User.role == "T") {
