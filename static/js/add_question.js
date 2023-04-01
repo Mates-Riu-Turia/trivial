@@ -46,6 +46,7 @@ let mainForm = {
 let imageForm = {
     imageInput: document.getElementById("image"),
     imagePreview: document.getElementById("previewImage"),
+    bigImage: document.getElementById("big"),
     imageFile: File,
     verify: function () {
         this.imageInput.classList = "form-control mb-3"
@@ -100,7 +101,7 @@ let questionForm = {
                 tries: parseInt(uploadForm.tries),
                 time: parseInt(uploadForm.timebar),
                 image: await imageForm.upload(),
-                bigger: false,
+                bigger: imageForm.bigImage.checked,
                 verified: uploadForm.verify.checked
             }
         })
@@ -247,8 +248,14 @@ fetch("http://localhost:8080/api/auth").then((response) => response.json()).then
 window.onbeforeunload = function () {
     return (question_saved ? null : true)
 }
-
 imageForm.imageInput.onchange = function () {
+    resizeImage();
+}
+imageForm.bigImage.onchange = function () {
+    resizeImage();
+}
+
+function resizeImage() {
     const [file] = imageForm.imageInput.files
     if (file) {
         if (file.type == "image/gif") {
@@ -268,11 +275,17 @@ imageForm.imageInput.onchange = function () {
                     var ctx = canvas.getContext('2d');
 
                     // We set the dimensions at the wanted size.
-                    canvas.width = 300;
-                    canvas.height = 300;
-
                     // We resize the image with the canvas method drawImage();
-                    ctx.drawImage(img, 0, 0, 300, 300);
+                    if (imageForm.bigImage.checked == true) {
+                        canvas.width = 600;
+                        canvas.height = 400;
+                        ctx.drawImage(img, 0, 0, 600, 400);
+                    }
+                    else {
+                        canvas.width = 300;
+                        canvas.height = 200;
+                        ctx.drawImage(img, 0, 0, 300, 200);
+                    }
 
                     // We get the URL and put it as the src of the previewImage
                     imageForm.imagePreview.src = canvas.toDataURL();
