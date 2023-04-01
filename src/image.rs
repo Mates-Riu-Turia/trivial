@@ -22,7 +22,7 @@ pub async fn save_file(
         if form.file.size > 1000000 {
             return Err(ServiceError::BadRequest("The file weights a lot".to_string()).into())
         }
-        let path = format!("./images/{}", chrono::Local::now().naive_local().to_string());
+        let path = format!("images/{}", chrono::Local::now().naive_local().to_string());
         return match form.file.file.persist(&path) {
             Ok(_) =>     Ok(HttpResponse::Ok().body(path)),
             Err(_) => Err(ServiceError::InternalServerError.into())
