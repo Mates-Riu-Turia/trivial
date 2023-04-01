@@ -46,6 +46,28 @@ let mainForm = {
 let imageForm = {
     imageInput: document.getElementById("image"),
     imagePreview: document.getElementById("previewImage"),
+    imageFile: File,
+    verify: function () {
+        this.imageInput.classList = "form-control mb-3"
+        if (this.imageFile.name == "File") {
+            this.imageInput.classList = "form-control mb-3 is-invalid"
+            return false
+        }
+        if (this.imageFile.size > 1000000) {
+            this.imageInput.classList = "form-control mb-3 is-invalid"
+            return false
+        }
+        return true
+    },
+    upload: async function () {
+        const formData = new FormData();
+        formData.append("file", this.imageFile);
+        const response = await fetch("/api/image", {
+            method: 'POST',
+            body: formData
+        });
+        return await response.text()
+    }
 };
 
 let uploadForm = {
@@ -67,7 +89,7 @@ let questionForm = {
             }
         })
     },
-    valuesTeacher: function () {
+    valuesTeacher: async function () {
         return JSON.stringify({
             Teacher: {
                 subject: mainForm.subject,
@@ -77,19 +99,19 @@ let questionForm = {
                 answers: mainForm.answers(),
                 tries: parseInt(uploadForm.tries),
                 time: parseInt(uploadForm.timebar),
-                image: "",
+                image: await imageForm.upload(),
                 bigger: false,
                 verified: uploadForm.verify.checked
             }
         })
     },
-    upload: function () {
+    upload: async function () {
         fetch("http://localhost:8080/api/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: (is_guest ? this.valuesGuest() : this.valuesTeacher())
+            body: (is_guest ? this.valuesGuest() : await this.valuesTeacher())
         }).then((response) => {
             if (response.ok) {
                 question_saved = true
@@ -135,12 +157,14 @@ function slide_next() {
     previousButton.disabled = false
 
     if (form_page >= 2) {
-        nextButton.disabled = true
-        form_page = 3
-        progressbar.style.width = "100%"
-        progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-primary rounded-pill"
-        questionImage.classList = "d-none"
-        questionUpload.classList = ""
+        if (imageForm.verify()) {
+            nextButton.disabled = true
+            form_page = 3
+            progressbar.style.width = "100%"
+            progress3.classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-primary rounded-pill"
+            questionImage.classList = "d-none"
+            questionUpload.classList = ""
+        }
     }
     else if (is_guest) {
         if (mainForm.verify()) {
@@ -229,6 +253,7 @@ imageForm.imageInput.onchange = function () {
     if (file) {
         if (file.type == "image/gif") {
             imageForm.imagePreview.src = URL.createObjectURL(file)
+            imageForm.imageFile = file
         }
         else {
             var reader = new FileReader();
@@ -253,8 +278,7 @@ imageForm.imageInput.onchange = function () {
                     imageForm.imagePreview.src = canvas.toDataURL();
 
                     canvas.toBlob(function (blob) {
-                        let imageFile = new File([blob], "image.png", { type: "image/png" });
-                        console.log(imageFile)
+                        imageForm.imageFile = new File([blob], "image.jpeg", { type: "image/jpeg" });
                     })
                 };
 
