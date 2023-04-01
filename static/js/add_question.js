@@ -43,6 +43,11 @@ let mainForm = {
     }
 };
 
+let imageForm = {
+    imageInput: document.getElementById("image"),
+    imagePreview: document.getElementById("previewImage"),
+};
+
 let uploadForm = {
     timebar: document.getElementById("timebar").value,
     hide: document.getElementById("hide"),
@@ -217,4 +222,48 @@ fetch("http://localhost:8080/api/auth").then((response) => response.json()).then
 
 window.onbeforeunload = function () {
     return (question_saved ? null : true)
+}
+
+imageForm.imageInput.onchange = function () {
+    const [file] = imageForm.imageInput.files
+    if (file) {
+        if (file.type == "image/gif") {
+            imageForm.imagePreview.src = URL.createObjectURL(file)
+        }
+        else {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                // We create an image to receive the Data URI
+                var img = document.createElement('img');
+
+                // When the event "onload" is triggered we can resize the image.
+                img.onload = function () {
+                    // We create a canvas and get its context.
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+
+                    // We set the dimensions at the wanted size.
+                    canvas.width = 300;
+                    canvas.height = 300;
+
+                    // We resize the image with the canvas method drawImage();
+                    ctx.drawImage(img, 0, 0, 300, 300);
+
+                    // We get the URL and put it as the src of the previewImage
+                    imageForm.imagePreview.src = canvas.toDataURL();
+
+                    canvas.toBlob(function (blob) {
+                        let imageFile = new File([blob], "image.png", { type: "image/png" });
+                        console.log(imageFile)
+                    })
+                };
+
+                // We put the Data URI in the image's src attrºibute
+                img.src = e.target.result;
+            }
+
+            //Convert the file into an URL
+            reader.readAsDataURL(file);
+        }
+    }
 }
