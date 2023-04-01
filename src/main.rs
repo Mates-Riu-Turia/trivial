@@ -5,7 +5,7 @@ use actix_web::{get, middleware, web, App, HttpServer};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
-use trivial_packager::{auth_handler, config::Config, models, question, register_handler};
+use trivial_packager::{auth_handler, config::Config, models, question, register_handler, image};
 
 #[get("/favicon.ico")]
 async fn publish_favicon() -> Result<NamedFile> {
@@ -123,7 +123,10 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         web::resource("/question").route(web::post().to(question::new_question)),
-                    ),
+                    )
+                    .service(
+                        web::resource("/image").route(web::post().to(image::save_file))
+                    )
             )
             .service(publish_favicon)
             .service(publish_index)

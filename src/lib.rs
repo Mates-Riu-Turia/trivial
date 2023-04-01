@@ -6,3 +6,4 @@ pub mod question;
 pub mod register_handler;
 pub mod schema;
 pub mod util;
+pub mod image;
