@@ -67,7 +67,12 @@ let imageForm = {
             method: 'POST',
             body: formData
         });
-        return await response.text()
+        if (!response.ok) {
+            return false;
+        }
+        else {
+            return await response.text();
+        }
     }
 };
 
