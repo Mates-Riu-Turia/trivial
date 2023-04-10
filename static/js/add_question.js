@@ -139,6 +139,20 @@ function adapt(data) {
         if (data.User.role == "T") {
             verify.add("d-none")
             uploadForm.verify.checked = false
+
+            let options = document.getElementById("subject").options;
+            for (i=0; i<options.length; i++) {
+                if (data.User.subjects.find(element => element == options[i].value) != undefined) {
+                    options[i].classList = "";
+                    options[i].selected = true;
+                }
+            }
+        }
+        else {
+            let options = document.getElementById("subject").options;
+            for (i=0; i<options.length; i++) {
+                options[i].classList = "";
+            }
         }
     }
     else {
