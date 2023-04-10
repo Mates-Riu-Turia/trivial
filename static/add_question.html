@@ -173,29 +173,29 @@
     <form id="questionMain">
       <div class="form-floating mb-3">
         <select class="form-select" id="subject">
-          <option value="anatomia">Anatomia Aplicada</option>
-          <option value="angles">Anglès</option>
-          <option value="biologia">Biologia i Geologia</option>
-          <option value="castella">Castellano</option>
-          <option value="clasica">Cultura Clàssica</option>
-          <option value="dibuix">Dibuix Tècnic</option>
-          <option value="ed_fisica">Educació Física</option>
-          <option value="filosofia">Filosofia</option>
-          <option value="fisica_quimica">Física i Química</option>
-          <option value="frances">Francès</option>
-          <option value="historia">Geografia i Història</option>
-          <option value="grec">Grec</option>
-          <option value="informatica">Informàtica</option>
-          <option value="literatura">Literatura Universal</option>
-          <option value="llati">Llatí</option>
-          <option value="mates">Matemàtiques</option>
-          <option value="musica">Música</option>
-          <option value="orientacio">Orientació i Tutoria</option>
-          <option value="plastica">Plàstica</option>
-          <option value="religio">Religions</option>
-          <option value="tecnologia">Tecnologia</option>
-          <option value="valencia">Valencià</option>
-          <option value="etica">Valors Étics</option>
+          <option value="anatomia" data-value="art">Anatomia Aplicada</option>
+          <option value="angles" data-value="foreign-language">Anglès</option>
+          <option value="biologia" data-value="science">Biologia i Geologia</option>
+          <option value="castella"  data-value="language">Castellano</option>
+          <option value="clasica" data-value="history">Cultura Clàssica</option>
+          <option value="dibuix" data-value="art">Dibuix Tècnic</option>
+          <option value="ed_fisica" data-value="art">Educació Física</option>
+          <option value="filosofia" data-value="philosophy">Filosofia</option>
+          <option value="fisica_quimica" data-value="science">Física i Química</option>
+          <option value="frances" data-value="foreign-language">Francès</option>
+          <option value="historia" data-value="history">Geografia i Història</option>
+          <option value="grec" data-value="foreign-language">Grec</option>
+          <option value="informatica" data-value="science">Informàtica</option>
+          <option value="literatura"  data-value="language">Literatura Universal</option>
+          <option value="llati" data-value="foreign-language">Llatí</option>
+          <option value="mates" data-value="science">Matemàtiques</option>
+          <option value="musica" data-value="art">Música</option>
+          <option value="orientacio" data-value="philosophy">Orientació i Tutoria</option>
+          <option value="plastica" data-value="art">Plàstica</option>
+          <option value="religio" data-value="philosophy">Religions</option>
+          <option value="tecnologia" data-value="science">Tecnologia</option>
+          <option value="valencia" data-value="language">Valencià</option>
+          <option value="etica" data-value="philosophy">Valors Étics</option>
         </select>
         <label for="subject">Elija su asignatura</label>
       </div>
@@ -269,7 +269,25 @@
       </div>
       <button type="button" class="btn btn-outline-success w-100 mb-3" onclick="questionForm.upload()">Introducir
         pregunta <i class="bi bi-box-seam"></i></button>
-    </form>
+      <button type="button" class="btn btn-outline-info w-100 mb-3" onclick="showPreview()"> Previsualizar pregunta <i class="bi bi-search"></i></button>  
+      </form>
+
+    <!-- Question Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="previewModalLabel">Previsualizar pregunta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body border border-5" id="previewModalBody">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>    
 
     <!-- Button group (Next and Discard) -->
     <div class="btn-group" role="group">

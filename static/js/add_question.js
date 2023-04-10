@@ -309,3 +309,45 @@ function resizeImage() {
         }
     }
 }
+
+function showPreview() {
+    let color;
+    switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")    ) {
+        case "foreign-language":
+            color = " #da1b0b";
+            break;
+        case "science":
+            color = "#1d950f";
+            break;
+        case "art":
+            color = "#ad6038";
+            break;
+        case "history":
+            color = "#e3701b";
+            break;
+        case "philosophy":
+            color = "#fee11e";
+            break;
+        default:
+            break;
+    }
+
+    let body = document.getElementById("previewModalBody");
+    body.style.setProperty("border-color", color, "important")
+
+    body.innerHTML = "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + "<span style='float:right;'>" + uploadForm.timebar + " Segundos</span></p>";
+    body.innerHTML += mainForm.question.value;
+
+    let answers = mainForm.answers().split(';');
+    let list = "<ul class='list-group'>";
+    for (i=0; i<answers.length; i++) {
+        list += "<li class='list-group-item'>" + answers[i] + "</li>";
+    }
+
+    body.innerHTML += "<br><img width='300' height='200' src='" + imageForm.imagePreview.src + "'></img>"
+
+    body.innerHTML += "<br><strong>RESPUESTAS</strong><br>"
+    body.innerHTML += list + "</ul>";
+
+    new bootstrap.Modal("#previewModal").show()
+}
