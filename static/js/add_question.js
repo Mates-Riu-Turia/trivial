@@ -358,7 +358,9 @@ function showPreview() {
         list += "<li class='list-group-item'>" + answers[i] + "</li>";
     }
 
-    body.innerHTML += "<br><img width='300' height='200' src='" + imageForm.imagePreview.src + "'></img>"
+    if (!is_guest) {
+        body.innerHTML += "<br><img width='300' height='200' src='" + imageForm.imagePreview.src + "'></img>"
+    }
 
     body.innerHTML += "<br><strong>RESPUESTAS</strong><br>"
     body.innerHTML += list + "</ul>";
