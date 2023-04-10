@@ -92,10 +92,18 @@ pub async fn login(
     id: Identity,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
+    let pool_clone = pool.clone();
+
     let user = match auth_data.into_inner() {
-        AuthData::User(user) => web::block(move || query_user(user, pool)).await??,
-        AuthData::Guest(guest) => web::block(move || query_guest(guest, pool)).await??,
+        AuthData::User(user) => web::block(move || query_user(user, pool_clone)).await??,
+        AuthData::Guest(guest) => web::block(move || query_guest(guest, pool_clone)).await??,
     };
+
+    if let AuthToken::User(data) = &user {
+        if data.role == *"T" {
+            println!("{:#?}", query_teacher_subject(data.email.clone(), pool));
+        }
+    }
 
     let user_string = serde_json::to_string(&user)?;
 
@@ -144,6 +152,131 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
         }
     }
     Err(ServiceError::Unauthorized)
+}
+
+fn query_teacher_subject(email: String, pool: web::Data<Pool>) -> Result<Vec<String>, ServiceError> {
+    use crate::schema::courses::dsl::*;
+
+    let mut subjects = Vec::new();
+    let mut conn = pool.get()?;
+
+    let items = courses.filter(anatomia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("anatomia".to_string());
+    }
+
+    let items = courses.filter(english.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("english".to_string());
+    }
+
+    let items = courses.filter(biologia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("biologia".to_string());
+    }
+
+    let items = courses.filter(castellano.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("castellano".to_string());
+    }
+
+    let items = courses.filter(clasica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("clasica".to_string());
+    }
+
+    let items = courses.filter(dibuix.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("dibuix".to_string());
+    }
+
+    let items = courses.filter(ed_fisica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("ed_fisica".to_string());
+    }
+
+    let items = courses.filter(filosofia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("filosofia".to_string());
+    }
+
+    let items = courses.filter(fisica_quimica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("fisica_quimica".to_string());
+    }
+
+    let items = courses.filter(frances.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("frances".to_string());
+    }
+
+    let items = courses.filter(historia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("historia".to_string());
+    }
+
+    let items = courses.filter(grec.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("grec".to_string());
+    }
+
+    let items = courses.filter(informatica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("informatica".to_string());
+    }
+
+    let items = courses.filter(literatura.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("literatura".to_string());
+    }
+
+    let items = courses.filter(llati.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("llati".to_string());
+    }
+
+    let items = courses.filter(mates.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("mates".to_string());
+    }
+
+    let items = courses.filter(musica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("musica".to_string());
+    }
+
+    let items = courses.filter(orientacio.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("orientacio".to_string());
+    }
+
+    let items = courses.filter(plastica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("plastica".to_string());
+    }
+
+    let items = courses.filter(religio.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("religio".to_string());
+    }
+
+    let items = courses.filter(tecnologia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("tecnologia".to_string());
+    }
+
+    let items = courses.filter(valencia.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("valencia".to_string());
+    }
+
+    let items = courses.filter(etica.eq(&email)).load::<Course>(&mut conn)?;
+    if items.len() > 0 {
+        subjects.push("etica".to_string());
+    }
+
+    Ok(subjects)
+
 }
 
 fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthToken, ServiceError> {
