@@ -40,6 +40,7 @@ pub struct AuthUser {
     pub email: String,
     pub gender: String,
     pub role: String,
+    pub subjects: Vec<String>,
     pub expires_at: chrono::NaiveDateTime,
     pub password_changed: bool,
 }
@@ -92,18 +93,12 @@ pub async fn login(
     id: Identity,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    let pool_clone = pool.clone();
+    //let pool_clone = pool.clone();
 
     let user = match auth_data.into_inner() {
-        AuthData::User(user) => web::block(move || query_user(user, pool_clone)).await??,
-        AuthData::Guest(guest) => web::block(move || query_guest(guest, pool_clone)).await??,
+        AuthData::User(user) => web::block(move || query_user(user, pool)).await??,
+        AuthData::Guest(guest) => web::block(move || query_guest(guest, pool)).await??,
     };
-
-    if let AuthToken::User(data) = &user {
-        if data.role == *"T" {
-            println!("{:#?}", query_teacher_subject(data.email.clone(), pool));
-        }
-    }
 
     let user_string = serde_json::to_string(&user)?;
 
@@ -140,11 +135,16 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
     if let Some(user) = items.pop() {
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
+                let mut subjects= Vec::new();
+                if user.role == *"T" {
+                    subjects = query_teacher_subject(user.email.clone(), pool)?;
+                }
                 return Ok(AuthToken::User(AuthUser {
                     name: user.name,
                     email: user.email,
                     gender: user.gender,
                     role: user.role,
+                    subjects,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
                     password_changed: user.password_changed,
                 }));
