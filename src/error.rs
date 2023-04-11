@@ -14,6 +14,9 @@ pub enum ServiceError {
 
     #[display(fmt = "Unauthorized")]
     Unauthorized,
+
+    #[display(fmt = "Redirect")]
+    Redirect,
 }
 
 // impl ResponseError trait allows to convert our errors into http responses with appropriate data
@@ -24,7 +27,8 @@ impl ResponseError for ServiceError {
                 HttpResponse::InternalServerError().json("Internal Server Error, Please try later")
             }
             ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
-            ServiceError::Unauthorized => HttpResponse::Unauthorized().json("unauthorized"), /*TemporaryRedirect().append_header(("Location", "http://localhost:8080/login")).finish()*/
+            ServiceError::Unauthorized => HttpResponse::Unauthorized().json("unauthorized"),
+            ServiceError::Redirect => HttpResponse::TemporaryRedirect().append_header(("Location", "/login?status=redirected")).finish(),
         }
     }
 }

@@ -155,12 +155,18 @@ function prepare() {
   
     let alertSuccess = document.getElementById("alertSuccess");
     let alertError = document.getElementById("alertError");
+    let alertErrorMessage = document.getElementById("alertErrorMessage")
   
     if (url.get("status") == "sessionClosed") {
       alertSuccess.classList = "alert alert-success alert-dismissible fade show";
     }
     if (url.get("status") == "loginError") {
+       alertErrorMessage.innerHTML = "Sucedió un error inesperado al iniciar sesión. Pruebe más adelante o contacte con el administrador."
       alertError.classList = "alert alert-danger alert-dismissible fade show";
+    }
+    if (url.get("status") == "redirected") {
+        alertErrorMessage.innerHTML = "Por favor, inicie sesión antes de acceder a esa página."
+        alertError.classList = "alert alert-danger alert-dismissible fade show";
     }
 
   }

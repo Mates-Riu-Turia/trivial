@@ -79,7 +79,7 @@ impl FromRequest for AuthToken {
                 }
             }
         }
-        err(ServiceError::Unauthorized.into())
+        err(ServiceError::Redirect.into())
     }
 }
 
