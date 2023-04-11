@@ -68,7 +68,7 @@ let imageForm = {
             body: formData
         });
         if (!response.ok) {
-            return false;
+            window.location = "/?status=questionAddImageError"
         }
         else {
             return await response.text();
@@ -121,10 +121,10 @@ let questionForm = {
         }).then((response) => {
             if (response.ok) {
                 question_saved = true
-                window.location = "http://localhost:8080/"
+                window.location = "/?status=questionAddSuccess"
             }
             else {
-                alert("Server Error!, try again later")
+                window.location = "/?status=questionAddError"
             }
         })
     }
@@ -350,7 +350,7 @@ function showPreview() {
     body.style.setProperty("border-color", color, "important")
 
     body.innerHTML = "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + "<span style='float:right;'>" + uploadForm.timebar + " Segundos</span></p>";
-    body.innerHTML += mainForm.question.value;
+    body.innerHTML += mainForm.question.value.replace(/(\n)+/g, '<br>');
 
     let answers = mainForm.answers().split(';');
     let list = "<ul class='list-group'>";

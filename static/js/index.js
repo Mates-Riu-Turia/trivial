@@ -160,4 +160,19 @@ function prepare() {
     alertError.classList = "alert alert-danger alert-dismissible fade show";
   }
 
+  if (url.get("status") == "questionAddSuccess") {
+    messageSuccess.innerHTML = "La pregunta se introdució satisfactoriamente."
+    alertSuccess.classList = "alert alert-success alert-dismissible fade show";
+  }
+
+  if (url.get("status") == "questionAddError") {
+    messageError.innerHTML = "Sucedió un error inesperado al subir la pregunta. Pruebe más adelante o contacte con el administrador."
+    alertError.classList = "alert alert-danger alert-dismissible fade show";
+  }  
+
+  if (url.get("status") == "questionAddImageError") {
+    messageError.innerHTML = "Sucedió un error inesperado al subir la imágen de la pregunta. Pruebe más adelante o contacte con el administrador."
+    alertError.classList = "alert alert-danger alert-dismissible fade show";
+  }  
+
 }
