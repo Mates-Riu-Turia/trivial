@@ -74,7 +74,7 @@ function logout() {
   fetch("http://localhost:8080/api/auth", {
     method: "DELETE",
   }
-  ).then(res => res.json()).then(res => window.location = "http://localhost:8080/login")
+  ).then(res => res.json()).then(res => window.location = "/login?status=sessionClosed")
 }
 
 function changePassword() {

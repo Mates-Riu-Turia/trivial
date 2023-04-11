@@ -140,12 +140,27 @@ function validateForm() {
             pass_btn.top = "15%";
         }
         else if (response.ok) {
-            window.location = "http://localhost:8080"
+            window.location = "/"
         }
         else {
-            alert("Server Error!, try it again later")
+            window.location = "/login?status=loginError"
         }
       })
 
     return false
 }
+
+function prepare() {
+    let url = new URL(window.location.toLocaleString()).searchParams;
+  
+    let alertSuccess = document.getElementById("alertSuccess");
+    let alertError = document.getElementById("alertError");
+  
+    if (url.get("status") == "sessionClosed") {
+      alertSuccess.classList = "alert alert-success alert-dismissible fade show";
+    }
+    if (url.get("status") == "loginError") {
+      alertError.classList = "alert alert-danger alert-dismissible fade show";
+    }
+
+  }

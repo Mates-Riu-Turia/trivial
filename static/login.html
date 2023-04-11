@@ -19,7 +19,7 @@
   <script src="static/js/sign-in.js"></script>
 </head>
 
-<body>
+<body onload="prepare()">
   <!-- The header with the navbar -->
   <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top margin-bottom-100">
@@ -112,6 +112,20 @@
 
   <!-- The sign-in form -->
   <main class="form-signin w-100 m-auto flex-shrink-0 text-center">
+    <!-- Success alert -->
+    <div class="alert alert-success alert-dismissible fade d-none" role="alert" id="alertSuccess">
+      <i class="bi bi-check-circle-fill"></i>
+      <strong>Sesión Cerrada. </strong>Gracias por usar Túria Trivial.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="resize_close()"></button>
+    </div>
+
+    <!-- Error alert -->
+    <div class="alert alert-danger alert-dismissible fade d-none" role="alert" id="alertError">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <strong>¡Error!</strong> <span id="alertErrorMessage">Sucedió un error inesperado al iniciar sesión. Pruebe más adelante o contacte con el administrador.</span>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="resize_close()"></button>
+    </div>
+
     <form name="loginForm" action="javascript:void(0)" onsubmit="return validateForm()">
       <img class="mt-4 mb-4" src="/favicon.ico" alt="Logo IES Riu Túria" width="134" height="75">
       <h1 class="h3 mb-3 fw-normal">Iniciar sesión en el Trivial</h1>
