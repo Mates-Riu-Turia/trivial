@@ -1,11 +1,10 @@
 use actix_files::NamedFile;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::Result;
-use actix_web::{get, middleware, web, App, HttpServer};
+use actix_web::{get, middleware, web, App, HttpServer, Result, http::StatusCode};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
-use trivial_packager::{auth_handler, config::Config, models, question, register_handler, image};
+use trivial_packager::{auth_handler, config::Config, image, models, question, register_handler};
 
 #[get("/favicon.ico")]
 async fn publish_favicon() -> Result<NamedFile> {
@@ -73,6 +72,12 @@ async fn publish_add_question_js() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+async fn not_found() -> Result<NamedFile> {
+    let path = PathBuf::from("static/404.html");
+    #[allow(deprecated)]
+    Ok(NamedFile::open(path)?.set_status_code(StatusCode::NOT_FOUND))
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let config = Config::new("./config.json");
@@ -124,9 +129,7 @@ async fn main() -> std::io::Result<()> {
                     .service(
                         web::resource("/question").route(web::post().to(question::new_question)),
                     )
-                    .service(
-                        web::resource("/image").route(web::post().to(image::save_file))
-                    )
+                    .service(web::resource("/image").route(web::post().to(image::save_file))),
             )
             .service(publish_favicon)
             .service(publish_index)
@@ -139,6 +142,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_add_question_css)
             .service(publish_index_js)
             .service(publish_add_question_js)
+            .default_service(web::route().to(not_found))
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?
     .run()
