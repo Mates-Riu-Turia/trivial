@@ -101,6 +101,7 @@ function name(data) {
       else {
         divElement.innerHTML = "Bienvenida " + data.User.name
       }
+      resize()
     }
   }
   else {
@@ -109,9 +110,9 @@ function name(data) {
       modifyPassword.style.cssText = "display: none !important;"
       div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
       divElement.innerHTML = "Bienvenido/a " + data.Guest.name
+      resize()
     }
   }
-  resize()
 }
 
 function resize_close() {
@@ -135,12 +136,13 @@ function resize() {
   }
 }
 
+fetch("/api/auth").then((response) => response.json()).then((data) => (name(data)))
+
 function prepare() {
   let url = new URL(window.location.toLocaleString());
 
   if (url.pathname = "/") {
     index_page = true;
-    fetch("/api/auth").then((response) => response.json()).then((data) => (name(data)))
     window.addEventListener('resize', () => resize(), false)
   }
 
