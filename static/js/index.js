@@ -105,7 +105,7 @@ function name(data) {
   }
   else {
     divElement2.innerHTML = data.Guest.name
-    if (window.location == "/") {
+    if (index_page) {
       modifyPassword.style.cssText = "display: none !important;"
       div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
       divElement.innerHTML = "Bienvenido/a " + data.Guest.name
