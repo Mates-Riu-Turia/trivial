@@ -5,7 +5,6 @@ let is_guest = false
 let question_saved = false
 
 let mainForm = {
-    subject: document.getElementById("subject").value,
     level: document.getElementById("level").value,
     question: document.getElementById("question"),
     answerTable: document.getElementById("answerTable"),
@@ -98,7 +97,7 @@ let questionForm = {
     valuesTeacher: async function () {
         return JSON.stringify({
             Teacher: {
-                subject: mainForm.subject,
+                subject: document.getElementById("subject").value,
                 level: parseInt(mainForm.level),
                 question: mainForm.question.value.replace(/(\n)+/g, '<br>'),
                 hide: !uploadForm.hide.checked,
