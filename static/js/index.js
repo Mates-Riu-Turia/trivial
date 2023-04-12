@@ -71,7 +71,7 @@ function modifyPassword() {
 }
 
 function logout() {
-  fetch("http://localhost:8080/api/auth", {
+  fetch("/api/auth", {
     method: "DELETE",
   }
   ).then(res => res.json()).then(res => window.location = "/login?status=sessionClosed")
@@ -91,7 +91,7 @@ function name(data) {
   if (data.User != undefined) {
     divElement2.innerHTML = data.User.name
     if (index_page) {
-      div.innerHTML = `<button onclick="window.location.href='http://localhost:8080/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
+      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
       if (data.User.password_changed == false) {
         new bootstrap.Toast("#liveToast").show()
       }
@@ -105,9 +105,9 @@ function name(data) {
   }
   else {
     divElement2.innerHTML = data.Guest.name
-    if (window.location == "http://localhost:8080/") {
+    if (window.location == "/") {
       modifyPassword.style.cssText = "display: none !important;"
-      div.innerHTML = `<button onclick="window.location.href='http://localhost:8080/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
+      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
       divElement.innerHTML = "Bienvenido/a " + data.Guest.name
     }
   }
@@ -140,7 +140,7 @@ function prepare() {
 
   if (url.pathname = "/") {
     index_page = true;
-    fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (name(data)))
+    fetch("/api/auth").then((response) => response.json()).then((data) => (name(data)))
     window.addEventListener('resize', () => resize(), false)
   }
 

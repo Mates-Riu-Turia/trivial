@@ -60,7 +60,7 @@ function guestLogin() {
         return false
     }
 
-    fetch("http://localhost:8080/api/auth", {
+    fetch("/api/auth", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -71,7 +71,7 @@ function guestLogin() {
             guest.modalError.show()
         }
         else if (response.ok) {
-            window.location = "http://localhost:8080"
+            window.location = "/"
         }
         else {
             alert("Server Error!, try it again later")
@@ -126,7 +126,7 @@ function validateForm() {
         return false
     }
     
-    fetch("http://localhost:8080/api/auth", {
+    fetch("/api/auth", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

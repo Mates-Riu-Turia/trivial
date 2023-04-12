@@ -112,7 +112,7 @@ let questionForm = {
         })
     },
     upload: async function () {
-        fetch("http://localhost:8080/api/question", {
+        fetch("/api/question", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -262,7 +262,7 @@ function add_answer() {
     }
 }
 
-fetch("http://localhost:8080/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
+fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
 
 window.onbeforeunload = function () {
     return (question_saved ? null : true)
