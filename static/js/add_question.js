@@ -5,7 +5,6 @@ let is_guest = false
 let question_saved = false
 
 let mainForm = {
-    level: document.getElementById("level").value,
     question: document.getElementById("question"),
     answerTable: document.getElementById("answerTable"),
     answerInput: document.getElementById("answerInput"),
@@ -76,21 +75,19 @@ let imageForm = {
 };
 
 let uploadForm = {
-    timebar: document.getElementById("timebar").value,
     hide: document.getElementById("hide"),
     verify: document.getElementById("verify"),
-    tries: document.getElementById("tries").value,
 };
 
 let questionForm = {
     valuesGuest: function () {
         return JSON.stringify({
             Guest: {
-                level: parseInt(mainForm.level),
+                level: parseInt(document.getElementById("level").value),
                 question: mainForm.question.value.replace(/(\n)+/g, '<br>'),
                 answers: mainForm.answers(),
-                tries: parseInt(uploadForm.tries),
-                time: parseInt(uploadForm.timebar),
+                tries: parseInt(document.getElementById("tries").value),
+                time: parseInt(document.getElementById("timebar").value),
             }
         })
     },
@@ -98,12 +95,12 @@ let questionForm = {
         return JSON.stringify({
             Teacher: {
                 subject: document.getElementById("subject").value,
-                level: parseInt(mainForm.level),
+                level: parseInt(document.getElementById("level").value),
                 question: mainForm.question.value.replace(/(\n)+/g, '<br>'),
                 hide: !uploadForm.hide.checked,
                 answers: mainForm.answers(),
-                tries: parseInt(uploadForm.tries),
-                time: parseInt(uploadForm.timebar),
+                tries: parseInt(document.getElementById("tries").value),
+                time: parseInt(document.getElementById("timebar").value),
                 image: await imageForm.upload(),
                 bigger: imageForm.bigImage.checked,
                 verified: uploadForm.verify.checked
