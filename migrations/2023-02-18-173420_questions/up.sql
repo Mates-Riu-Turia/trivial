@@ -1,7 +1,8 @@
 CREATE TABLE questions (
+    id  int NOT NULL AUTO_INCREMENT PRIMARY KEY,
     subject VARCHAR(100) NOT NULL,
     level INT(11) NOT NULL,
-    question VARCHAR(500) NOT NULL PRIMARY KEY,
+    question VARCHAR(500) NOT NULL,
     hide BOOLEAN NOT NULL,
     answers VARCHAR(50) NOT NULL,
     tries INT(11) NOT NULL,

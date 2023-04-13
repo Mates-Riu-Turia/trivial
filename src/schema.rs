@@ -30,7 +30,8 @@ diesel::table! {
 }
 
 diesel::table! {
-    questions (question) {
+    questions (id) {
+        id -> Integer,
         subject -> Varchar,
         level -> Integer,
         question -> Varchar,
@@ -48,7 +49,8 @@ diesel::table! {
 }
 
 diesel::table! {
-    students_questions (question) {
+    students_questions (id) {
+        id -> Integer,
         course_creator -> Varchar,
         name_creator -> Varchar,
         subject -> Varchar,
