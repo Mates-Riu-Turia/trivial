@@ -30,6 +30,12 @@ async fn publish_add_question_html(_logged_user: auth_handler::AuthToken) -> Res
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/modify_question")]
+async fn publish_modify_question_html(_logged_user: auth_handler::AuthToken) -> Result<NamedFile> {
+    let path = PathBuf::from("static/modify_question.html");
+    Ok(NamedFile::open(path)?)
+}
+
 #[get("/static/js/color-modes.js")]
 async fn publish_color_modes_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/color-modes.js");
@@ -135,6 +141,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_index)
             .service(publish_login_html)
             .service(publish_add_question_html)
+            .service(publish_modify_question_html)
             .service(publish_color_modes_js)
             .service(publish_sign_in_css)
             .service(publish_sign_in_js)

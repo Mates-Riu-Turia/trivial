@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Introducir preguntas en el Trivial">
+  <meta name="author" content="Juanjo Asensio García">
+  <title>Modificar pregunta</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <!-- Custom css styles -->
+  <link href="static/css/add_question.css" rel="stylesheet">
+  <script type="module" src="static/js/color-modes.js"></script>
+  <script src="static/js/index.js"></script>
+</head>
+
+<body>
+  <!-- The header with the navbar -->
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top margin-bottom-100">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/favicon.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+          Trivial IES Riu Túria
+        </a>
+        <!-- A button that is showed when we are in small screen for collapse the navbar -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <!-- Change the language -->
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-translate"></i>
+                Cambiar idioma
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Castellano</a></li>
+                <li><a class="dropdown-item" href="#">Valencià</a></li>
+                <li><a class="dropdown-item" href="#">English</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <div class="dropdown color-modes">
+                <button class="
+                    btn btn-link
+                    px-0
+                    text-decoration-none
+                    dropdown-toggle
+                    d-flex
+                    align-items-center
+                  " id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown"
+                  data-bs-display="static">
+                  <i class="bi bi-circle-half theme-icon-active">
+                    <use href="bi-cercle-half"></use>
+                  </i>
+                  &nbsp;Cambiar tema
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme"
+                  style="--bs-dropdown-min-width: 8rem">
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                      <i class="bi bi-sun-fill"></i>
+                      &nbsp;Claro
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-sun-fill"></use>
+                      </svg>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                      <i class="bi bi-moon-stars-fill"></i>
+                      &nbsp;Oscuro
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-moon-stars-fill"></use>
+                      </svg>
+                    </button>
+                  </li>
+                  <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center active"
+                      data-bs-theme-value="auto">
+                      <i class="bi bi-circle-half"></i>
+                      &nbsp;Automático
+                      <svg class="bi ms-auto d-none">
+                        <use href="bi-circle-half"></use>
+                      </svg>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-person-circle"></i>
+                &nbsp;Mi perfil
+              </a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-item" id="menu-name"></li>
+                <li class="dropdown-divider"></li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" id="modifyPasswordOption"
+                    onclick="changePassword()"><i class="bi bi-key"></i>&nbsp;Modificar contraseña</button>
+                </li>
+                <li>
+                  <button type="button" class="dropdown-item d-flex align-items-center" onclick="logout()"><i
+                      class="bi bi-box-arrow-right"></i>&nbsp;Cerrar sesión</button>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="m-auto text-center">
+    <h1>Modificar una pregunta del Trivial</h1>
+
+    <!-- Progress bar -->
+    <div class="position-relative mb-5 mt-5 ms-5 me-5">
+      <div class="progress" role="progressbar" aria-label="Progress" aria-valuenow="50" aria-valuemin="0"
+        aria-valuemax="100" style="height: 1px">
+        <div class="progress-bar" style="width: 0%" id="progressbar"></div>
+      </div>
+      <button type="button" class="
+          position-absolute
+          top-0
+          start-0
+          translate-middle
+          btn btn-sm btn-primary
+          rounded-pill
+        " style="width: 2rem; height: 2rem" id="progress1">
+        1
+      </button>
+      <button type="button" class="
+          position-absolute
+          top-0
+          start-100
+          translate-middle
+          btn btn-sm btn-secondary
+          rounded-pill
+        " style="width: 2rem; height: 2rem" id="progress2">
+        2
+      </button>
+    </div>
+
+    <!-- Choose filters -->
+    <form>
+      <div class="form-floating mb-3">
+        <select class="form-select" id="subject">
+          <option class="d-none" value="anatomia" data-value="art">Anatomia Aplicada</option>
+          <option class="d-none" value="english" data-value="foreign-language">Anglès</option>
+          <option class="d-none" value="biologia" data-value="science">Biologia i Geologia</option>
+          <option class="d-none" value="castellano"  data-value="language">Castellano</option>
+          <option class="d-none" value="clasica" data-value="history">Cultura Clàssica</option>
+          <option class="d-none" value="dibuix" data-value="art">Dibuix Tècnic</option>
+          <option class="d-none" value="ed_fisica" data-value="art">Educació Física</option>
+          <option class="d-none" value="filosofia" data-value="philosophy">Filosofia</option>
+          <option class="d-none" value="fisica_quimica" data-value="science">Física i Química</option>
+          <option class="d-none" value="frances" data-value="foreign-language">Francès</option>
+          <option class="d-none" value="historia" data-value="history">Geografia i Història</option>
+          <option class="d-none" value="grec" data-value="foreign-language">Grec</option>
+          <option class="d-none" value="informatica" data-value="science">Informàtica</option>
+          <option class="d-none" value="literatura"  data-value="language">Literatura Universal</option>
+          <option class="d-none" value="llati" data-value="foreign-language">Llatí</option>
+          <option class="d-none" value="mates" data-value="science">Matemàtiques</option>
+          <option class="d-none" value="musica" data-value="art">Música</option>
+          <option class="d-none" value="orientacio" data-value="philosophy">Orientació i Tutoria</option>
+          <option class="d-none" value="plastica" data-value="art">Plàstica</option>
+          <option class="d-none" value="religio" data-value="philosophy">Religions</option>
+          <option class="d-none" value="tecnologia" data-value="science">Tecnologia</option>
+          <option class="d-none" value="valencia" data-value="language">Valencià</option>
+          <option class="d-none" value="etica" data-value="philosophy">Valors Étics</option>
+        </select>
+        <label for="subject">Elija su asignatura</label>
+      </div>
+      <div class="form-floating mb-3">
+        <select class="form-select" id="level">
+          <option value="0">Básico</option>
+          <option value="1">1º ESO</option>
+          <option value="2">2º ESO</option>
+          <option value="3">3º ESO</option>
+          <option value="4">4º ESO</option>
+          <option value="5">Bachillerato</option>
+        </select>
+        <label for="level">Elija el nivel</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input id="startDate" class="form-control" type="date" />
+        <label for="startDate">Elija la fecha de inicio</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input id="startDate" class="form-control" type="date" />
+        <label for="startDate">Elija la fecha de fin</label>
+      </div>
+      <p>Preguntas creadas por:</p>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+        <label class="form-check-label" for="exampleRadios1">
+          Todos
+        </label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+        <label class="form-check-label" for="exampleRadios2">
+          Solo yo
+        </label>
+      </div>    
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1">
+        <label class="form-check-label" for="exampleRadios1">
+          Todos menos yo
+        </label>
+      </div>        
+    </form>
+
+    <!-- Button group (Next and Discard) -->
+    <div class="btn-group" role="group">
+      <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i
+          class="bi bi-arrow-left"></i> Anterior</i></button>
+      <button type="button" class="btn btn-outline-danger"
+        onclick="window.location = '/'">Descartar pregunta <i class="bi bi-trash"></i></button>
+      <button type="button" class="btn btn-outline-primary" onclick="slide_next()" id="nextButton">Siguiente <i
+          class="bi bi-arrow-right"></i></button>
+    </div>
+
+    <!-- Change password modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="changePasswordModalLabel">Cambiar contraseña de inicio de sesión</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Introduzca la nueva contraseña, luego introduzcala de nuevo para confirmar:</p>
+            <form name="modifyPasswordForm">
+              <div class="input-group">
+                <div class="form-floating">
+                  <input type="password" class="form-control" id="password" placeholder="Password">
+                  <label for="password">Contraseña</label>
+                  <div class="invalid-feedback">
+                    Introduzca una contraseña válida
+                  </div>
+                </div>
+                <button id="toggle-password1" type="button" class="toogle-password bi bi-eye"
+                  aria-label="Show password as plain text. Warning: this will display your password on the screen."
+                  onclick="changePasswordVisibility(this, 0)">
+                </button>
+              </div>
+              <div class="input-group">
+                <div class="form-floating">
+                  <input type="password" class="form-control" id="passwordAgain" placeholder="Password">
+                  <label for="passwordAgain">Contraseña</label>
+                  <div class="invalid-feedback">
+                    Las contraseñas no coinciden
+                  </div>
+                </div>
+                <button id="toggle-password2" type="button" class="toogle-password bi bi-eye"
+                  aria-label="Show password as plain text. Warning: this will display your password on the screen."
+                  onclick="changePasswordVisibility(this, 1)">
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="modifyPassword()">Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>
