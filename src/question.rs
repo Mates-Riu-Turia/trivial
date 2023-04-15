@@ -74,6 +74,16 @@ impl StudentQuestionData {
     }
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+
+pub struct Filter {
+    pub subject: String,
+    pub level: i32,
+    pub start_date: chrono::NaiveDateTime,
+    pub end_date: chrono::NaiveDateTime,
+    pub creator: i32,
+}
+
 pub async fn new_question(
     auth_data: AuthToken,
     question: web::Json<QuestionData>,
@@ -115,6 +125,17 @@ pub async fn new_question(
     Ok(HttpResponse::Ok().finish())
 }
 
+pub async fn get_questions(auth_data: AuthToken,
+    filter: web::Json<Filter>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, actix_web::Error> {
+    if let AuthToken::User(user) = auth_data {
+        let data = web::block(move || filter_question_query(filter.into_inner(),user.email, pool)).await??;
+        return Ok(HttpResponse::Ok().json(data));
+    }
+    Err(ServiceError::Unauthorized.into())
+}
+
 fn new_question_query(question: Question, pool: web::Data<Pool>) -> Result<(), ServiceError> {
     use crate::schema::questions::dsl::questions;
 
@@ -141,4 +162,30 @@ fn new_student_question_query(
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
     };
+}
+
+fn filter_question_query(filter: Filter,  filter_user: String, pool: web::Data<Pool>) -> Result<Vec<Question>, ServiceError> {
+    use crate::schema::questions::dsl::*;
+
+    let mut conn = pool.get()?;
+
+    let data = questions
+        .filter(subject.eq(filter.subject))
+        .filter(level.eq(filter.level))
+        .filter(created_at.ge(filter.start_date))
+        .filter(created_at.le(filter.end_date));
+    
+    let vec;
+
+    if filter.creator == 1 {
+        vec = data.load::<Question>(&mut conn)?;
+    }
+    else if filter.creator == 2 {
+        vec = data.filter(creator.eq(filter_user)).load::<Question>(&mut conn)?;
+    } 
+    else {
+        vec = data.filter(creator.ne(filter_user)).load::<Question>(&mut conn)?;
+    }
+
+    Ok(vec)
 }

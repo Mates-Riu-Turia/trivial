@@ -34,6 +34,7 @@ impl User {
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = questions)]
 pub struct Question {
+    pub id: i32,
     pub subject: String,
     pub level: i32,
     pub question: String,
@@ -64,6 +65,7 @@ impl Question {
         creator: T,
     ) -> Self {
         Self {
+            id: 0,
             subject: subject.into(),
             level: level.into(),
             question: question.into(),

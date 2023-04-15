@@ -44,7 +44,7 @@ diesel::table! {
         created_at -> Timestamp,
         verified -> Bool,
         modified -> Bool,
-        creator -> Nullable<Varchar>,
+        creator -> Varchar,
     }
 }
 

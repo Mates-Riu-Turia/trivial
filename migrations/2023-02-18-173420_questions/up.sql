@@ -12,5 +12,5 @@ CREATE TABLE questions (
     created_at TIMESTAMP NOT NULL,
     verified BOOLEAN NOT NULL,
     modified BOOLEAN NOT NULL,
-    creator VARCHAR(100)
+    creator VARCHAR(100) NOT NULL
 )DEFAULT CHARSET=utf8mb4;
