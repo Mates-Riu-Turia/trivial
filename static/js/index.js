@@ -177,4 +177,9 @@ function prepare() {
     alertError.classList = "alert alert-danger alert-dismissible fade show";
   }  
 
+  if (url.get("status") == "questionModifyError") {
+    messageError.innerHTML = "Sucedió un error inesperado al filtrar o modificar la pregunta. Pruebe más adelante o contacte con el administrador."
+    alertError.classList = "alert alert-danger alert-dismissible fade show";
+  }
+
 }

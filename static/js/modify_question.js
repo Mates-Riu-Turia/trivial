@@ -1,4 +1,3 @@
-let form_page = 1;
 let is_admin = false;
 let changes_saved = false;
 
@@ -17,8 +16,8 @@ let filterForm = {
         }
         return (date + "T23:59:59.999999999")
     },
-    filter: function () {
-        fetch("/api/filter_question", {
+    filter: async function () {
+        const response = await fetch("/api/filter_question", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -30,7 +29,47 @@ let filterForm = {
               end_date: this.end_date(),
               creator: parseInt(document.querySelector("input[name='creator']:checked").value)
             })
-        }).then(response => console.log(response.json()))
+        })
+        if (!response.ok) {
+            changes_saved = true
+            window.location = "/?status=questionModifyError"
+        }
+        else {
+            return await response.json();
+        }
+    },
+    fill_preview: async function () {
+        let questions = await this.filter()
+        let preview = document.getElementById("preview")
+        preview.classList = "row row-cols-4"
+        let color;
+    switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")    ) {
+        case "foreign-language":
+            color = " #da1b0b";
+            break;
+        case "science":
+            color = "#1d950f";
+            break;
+        case "art":
+            color = "#ad6038";
+            break;
+        case "history":
+            color = "#e3701b";
+            break;
+        case "philosophy":
+            color = "#fee11e";
+            break;
+        default:
+            break;
+    }
+        questions.forEach(question => {
+            let prev = "<div class='col border border-5 me-3 mb-3 ms-4' style='width: 350px; " + "border-color: " + color + "!important'>"
+            prev += "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + " (Nivel " + question.level + ")" + "<span style='float:right;'>" + question.time + " Segundos</span></p>"
+            prev += question.question
+            prev += "<br><img width='300' height='200' class='mb-3' src='" + question.image + "'></img>"
+            prev += "</div>"
+            preview.innerHTML += prev
+        });
     }
 };
 
@@ -58,8 +97,21 @@ function adapt(data) {
 }
 
 function slide_next() {
-    form_page = 2;
-    filterForm.filter()
+    document.getElementById("progressbar").style.width = "100%";
+    document.getElementById("progress2").classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-primary rounded-pill"
+    document.getElementById("nextButton").disabled = true
+    document.getElementById("previousButton").disabled = false
+    document.getElementById("filters").classList.add("d-none")
+    filterForm.fill_preview()
+}
+
+function slide_previous() {
+    document.getElementById("progressbar").style.width = "0%";
+    document.getElementById("progress2").classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill"
+    document.getElementById("nextButton").disabled = false
+    document.getElementById("previousButton").disabled = true
+    document.getElementById("filters").classList = ""
+    document.getElementById("preview").classList.add("d-none")
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))

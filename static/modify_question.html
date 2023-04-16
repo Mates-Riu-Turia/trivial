@@ -124,7 +124,7 @@
   </header>
 
   <main class="m-auto text-center">
-    <h1>Modificar una pregunta del Trivial</h1>
+    <h1 class="mt-5">Modificar una pregunta del Trivial</h1>
 
     <!-- Progress bar -->
     <div class="position-relative mb-5 mt-5 ms-5 me-5">
@@ -155,7 +155,7 @@
     </div>
 
     <!-- Choose filters -->
-    <form>
+    <form id="filters">
       <div class="form-floating mb-3">
         <select class="form-select" id="subject">
           <option class="d-none" value="anatomia" data-value="art">Anatomia Aplicada</option>
@@ -226,8 +226,14 @@
       </fieldset>
     </form>
 
+    <!-- Grid with questions preview -->
+    <div class="container mb-3">
+      <div class="row row-cols-4 d-none" id="preview">
+      </div>
+    </div>
+
     <!-- Button group (Next and Discard) -->
-    <div class="btn-group" role="group">
+    <div class="btn-group mb-5" role="group">
       <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i
           class="bi bi-arrow-left"></i> Anterior</i></button>
       <button type="button" class="btn btn-outline-danger" onclick="window.location = '/'">Descartar cambios <i
