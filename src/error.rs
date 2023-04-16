@@ -28,7 +28,9 @@ impl ResponseError for ServiceError {
             }
             ServiceError::BadRequest(ref message) => HttpResponse::BadRequest().json(message),
             ServiceError::Unauthorized => HttpResponse::Unauthorized().json("unauthorized"),
-            ServiceError::Redirect => HttpResponse::TemporaryRedirect().append_header(("Location", "/login?status=redirected")).finish(),
+            ServiceError::Redirect => HttpResponse::TemporaryRedirect()
+                .append_header(("Location", "/login?status=redirected"))
+                .finish(),
         }
     }
 }

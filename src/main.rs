@@ -1,6 +1,6 @@
 use actix_files::NamedFile;
 use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::{get, middleware, web, App, HttpServer, Result, http::StatusCode};
+use actix_web::{get, http::StatusCode, middleware, web, App, HttpServer, Result};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
@@ -139,12 +139,11 @@ async fn main() -> std::io::Result<()> {
                             .route(web::patch().to(auth_handler::modify_password)),
                     )
                     .service(
-                        web::resource("/question")
-                            .route(web::post().to(question::new_question)),
+                        web::resource("/question").route(web::post().to(question::new_question)),
                     )
                     .service(
                         web::resource("/filter_question")
-                        .route(web::post().to(question::get_questions)),
+                            .route(web::post().to(question::get_questions)),
                     )
                     .service(web::resource("/image").route(web::post().to(image::save_file))),
             )

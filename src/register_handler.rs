@@ -26,7 +26,7 @@ pub async fn register_user(
     } else if !(user_data.role == *"A" || user_data.role == *"T") {
         return Err(actix_web::error::ErrorBadRequest("Missing role"));
     }
-    
+
     web::block(move || query(user_data, pool)).await??;
 
     Ok(HttpResponse::Ok().finish())

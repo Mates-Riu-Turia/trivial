@@ -43,7 +43,7 @@ impl TeacherQuestionData {
             created_at: chrono::Local::now().naive_local(),
             verified: self.verified,
             modified: false,
-            creator
+            creator,
         }
     }
 }
@@ -73,7 +73,7 @@ impl StudentQuestionData {
             answers: self.answers,
             tries: self.tries,
             time: self.time,
-            created_at: chrono::Local::now().naive_local()
+            created_at: chrono::Local::now().naive_local(),
         }
     }
 }
@@ -116,7 +116,7 @@ pub async fn new_question(
                 let question = question.to_question_model(
                     format!("{}-{}", auth_data.course, auth_data.class),
                     auth_data.name,
-                    auth_data.subject
+                    auth_data.subject,
                 );
                 web::block(move || new_student_question_query(question, pool)).await??;
             } else {
@@ -129,12 +129,14 @@ pub async fn new_question(
     Ok(HttpResponse::Ok().finish())
 }
 
-pub async fn get_questions(auth_data: AuthToken,
+pub async fn get_questions(
+    auth_data: AuthToken,
     filter: web::Json<Filter>,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
     if let AuthToken::User(user) = auth_data {
-        let data = web::block(move || filter_question_query(filter.into_inner(),user.email, pool)).await??;
+        let data = web::block(move || filter_question_query(filter.into_inner(), user.email, pool))
+            .await??;
         return Ok(HttpResponse::Ok().json(data));
     }
     Err(ServiceError::Unauthorized.into())
@@ -168,7 +170,11 @@ fn new_student_question_query(
     }
 }
 
-fn filter_question_query(filter: Filter,  filter_user: String, pool: web::Data<Pool>) -> Result<Vec<Question>, ServiceError> {
+fn filter_question_query(
+    filter: Filter,
+    filter_user: String,
+    pool: web::Data<Pool>,
+) -> Result<Vec<Question>, ServiceError> {
     use crate::schema::questions::dsl::*;
 
     let mut conn = pool.get()?;
@@ -178,17 +184,19 @@ fn filter_question_query(filter: Filter,  filter_user: String, pool: web::Data<P
         .filter(level.eq(filter.level))
         .filter(created_at.ge(filter.start_date))
         .filter(created_at.le(filter.end_date));
-    
+
     let vec;
 
     if filter.creator == 1 {
         vec = data.load::<Question>(&mut conn)?;
-    }
-    else if filter.creator == 2 {
-        vec = data.filter(creator.eq(filter_user)).load::<Question>(&mut conn)?;
-    } 
-    else {
-        vec = data.filter(creator.ne(filter_user)).load::<Question>(&mut conn)?;
+    } else if filter.creator == 2 {
+        vec = data
+            .filter(creator.eq(filter_user))
+            .load::<Question>(&mut conn)?;
+    } else {
+        vec = data
+            .filter(creator.ne(filter_user))
+            .load::<Question>(&mut conn)?;
     }
 
     Ok(vec)

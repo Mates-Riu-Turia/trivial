@@ -135,7 +135,7 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
     if let Some(user) = items.pop() {
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
-                let mut subjects= Vec::new();
+                let mut subjects = Vec::new();
                 if user.role == *"T" {
                     subjects = query_teacher_subject(user.email.clone(), pool)?;
                 }
@@ -154,63 +154,88 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
     Err(ServiceError::Unauthorized)
 }
 
-fn query_teacher_subject(email: String, pool: web::Data<Pool>) -> Result<Vec<String>, ServiceError> {
+fn query_teacher_subject(
+    email: String,
+    pool: web::Data<Pool>,
+) -> Result<Vec<String>, ServiceError> {
     use crate::schema::courses::dsl::*;
 
     let mut subjects = Vec::new();
     let mut conn = pool.get()?;
 
-    let items = courses.filter(anatomia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(anatomia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("anatomia".to_string());
     }
 
-    let items = courses.filter(english.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(english.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("english".to_string());
     }
 
-    let items = courses.filter(biologia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(biologia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("biologia".to_string());
     }
 
-    let items = courses.filter(castellano.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(castellano.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("castellano".to_string());
     }
 
-    let items = courses.filter(clasica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(clasica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("clasica".to_string());
     }
 
-    let items = courses.filter(dibuix.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(dibuix.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("dibuix".to_string());
     }
 
-    let items = courses.filter(ed_fisica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(ed_fisica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("ed_fisica".to_string());
     }
 
-    let items = courses.filter(filosofia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(filosofia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("filosofia".to_string());
     }
 
-    let items = courses.filter(fisica_quimica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(fisica_quimica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("fisica_quimica".to_string());
     }
 
-    let items = courses.filter(frances.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(frances.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("frances".to_string());
     }
 
-    let items = courses.filter(historia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(historia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("historia".to_string());
     }
@@ -220,12 +245,16 @@ fn query_teacher_subject(email: String, pool: web::Data<Pool>) -> Result<Vec<Str
         subjects.push("grec".to_string());
     }
 
-    let items = courses.filter(informatica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(informatica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("informatica".to_string());
     }
 
-    let items = courses.filter(literatura.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(literatura.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("literatura".to_string());
     }
@@ -240,32 +269,44 @@ fn query_teacher_subject(email: String, pool: web::Data<Pool>) -> Result<Vec<Str
         subjects.push("mates".to_string());
     }
 
-    let items = courses.filter(musica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(musica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("musica".to_string());
     }
 
-    let items = courses.filter(orientacio.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(orientacio.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("orientacio".to_string());
     }
 
-    let items = courses.filter(plastica.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(plastica.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("plastica".to_string());
     }
 
-    let items = courses.filter(religio.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(religio.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("religio".to_string());
     }
 
-    let items = courses.filter(tecnologia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(tecnologia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("tecnologia".to_string());
     }
 
-    let items = courses.filter(valencia.eq(&email)).load::<Course>(&mut conn)?;
+    let items = courses
+        .filter(valencia.eq(&email))
+        .load::<Course>(&mut conn)?;
     if !items.is_empty() {
         subjects.push("valencia".to_string());
     }
@@ -276,7 +317,6 @@ fn query_teacher_subject(email: String, pool: web::Data<Pool>) -> Result<Vec<Str
     }
 
     Ok(subjects)
-
 }
 
 fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthToken, ServiceError> {
