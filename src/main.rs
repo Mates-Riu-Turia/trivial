@@ -78,6 +78,12 @@ async fn publish_add_question_js() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/static/js/modify_question.js")]
+async fn publish_modify_question_js() -> Result<NamedFile> {
+    let path = PathBuf::from("static/js/modify_question.js");
+    Ok(NamedFile::open(path)?)
+}
+
 async fn not_found() -> Result<NamedFile> {
     let path = PathBuf::from("static/404.html");
     #[allow(deprecated)]
@@ -154,6 +160,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_add_question_css)
             .service(publish_index_js)
             .service(publish_add_question_js)
+            .service(publish_modify_question_js)
             .default_service(web::route().to(not_found))
     })
     .bind(format!("{}:{}", config_copy.domain, config_copy.port))?

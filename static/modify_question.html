@@ -17,6 +17,7 @@
   <link href="static/css/add_question.css" rel="stylesheet">
   <script type="module" src="static/js/color-modes.js"></script>
   <script src="static/js/index.js"></script>
+  <script src="static/js/modify_question.js"></script>
 </head>
 
 <body>
@@ -160,7 +161,7 @@
           <option class="d-none" value="anatomia" data-value="art">Anatomia Aplicada</option>
           <option class="d-none" value="english" data-value="foreign-language">Anglès</option>
           <option class="d-none" value="biologia" data-value="science">Biologia i Geologia</option>
-          <option class="d-none" value="castellano"  data-value="language">Castellano</option>
+          <option class="d-none" value="castellano" data-value="language">Castellano</option>
           <option class="d-none" value="clasica" data-value="history">Cultura Clàssica</option>
           <option class="d-none" value="dibuix" data-value="art">Dibuix Tècnic</option>
           <option class="d-none" value="ed_fisica" data-value="art">Educació Física</option>
@@ -170,7 +171,7 @@
           <option class="d-none" value="historia" data-value="history">Geografia i Història</option>
           <option class="d-none" value="grec" data-value="foreign-language">Grec</option>
           <option class="d-none" value="informatica" data-value="science">Informàtica</option>
-          <option class="d-none" value="literatura"  data-value="language">Literatura Universal</option>
+          <option class="d-none" value="literatura" data-value="language">Literatura Universal</option>
           <option class="d-none" value="llati" data-value="foreign-language">Llatí</option>
           <option class="d-none" value="mates" data-value="science">Matemàtiques</option>
           <option class="d-none" value="musica" data-value="art">Música</option>
@@ -199,36 +200,38 @@
         <label for="startDate">Elija la fecha de inicio</label>
       </div>
       <div class="form-floating mb-3">
-        <input id="startDate" class="form-control" type="date" />
-        <label for="startDate">Elija la fecha de fin</label>
+        <input id="endDate" class="form-control" type="date" />
+        <label for="endDate">Elija la fecha de fin</label>
       </div>
-      <p>Preguntas creadas por:</p>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
-        <label class="form-check-label" for="exampleRadios1">
-          Todos
-        </label>
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
-        <label class="form-check-label" for="exampleRadios2">
-          Solo yo
-        </label>
-      </div>    
-      <div class="form-check mb-3">
-        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1">
-        <label class="form-check-label" for="exampleRadios1">
-          Todos menos yo
-        </label>
-      </div>        
+      <fieldset class="border border-2 mb-3" id="creator">
+        <legend>Preguntas creadas por: </legend>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="creator" id="creator1" value="1">
+          <label class="form-check-label" for="creator1">
+            Todos
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="creator" id="creator2" value="2" checked>
+          <label class="form-check-label" for="creator2">
+            Solo yo
+          </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="creator" id="creator3" value="3">
+          <label class="form-check-label" for="creator3">
+            Todos menos yo
+          </label>
+        </div>
+      </fieldset>
     </form>
 
     <!-- Button group (Next and Discard) -->
     <div class="btn-group" role="group">
       <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i
           class="bi bi-arrow-left"></i> Anterior</i></button>
-      <button type="button" class="btn btn-outline-danger"
-        onclick="window.location = '/'">Descartar pregunta <i class="bi bi-trash"></i></button>
+      <button type="button" class="btn btn-outline-danger" onclick="window.location = '/'">Descartar cambios <i
+          class="bi bi-trash"></i></button>
       <button type="button" class="btn btn-outline-primary" onclick="slide_next()" id="nextButton">Siguiente <i
           class="bi bi-arrow-right"></i></button>
     </div>
