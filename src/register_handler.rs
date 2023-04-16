@@ -26,10 +26,10 @@ pub async fn register_user(
     } else if !(user_data.role == String::from("A") || user_data.role == String::from("T")) {
         return Err(actix_web::error::ErrorBadRequest("Missing role"));
     }
+    
+    web::block(move || query(user_data, pool)).await??;
 
-    let user = web::block(move || query(user_data, pool)).await??;
-
-    Ok(HttpResponse::Ok().json(&user))
+    Ok(HttpResponse::Ok().finish())
 }
 
 fn query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), crate::error::ServiceError> {
