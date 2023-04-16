@@ -20,14 +20,14 @@ let filterForm = {
         const response = await fetch("/api/filter_question", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json"
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              subject: document.getElementById("subject").value,
-              level: parseInt(document.getElementById("level").value),
-              start_date: this.start_date(),
-              end_date: this.end_date(),
-              creator: parseInt(document.querySelector("input[name='creator']:checked").value)
+                subject: document.getElementById("subject").value,
+                level: parseInt(document.getElementById("level").value),
+                start_date: this.start_date(),
+                end_date: this.end_date(),
+                creator: parseInt(document.querySelector("input[name='creator']:checked").value)
             })
         })
         if (!response.ok) {
@@ -41,27 +41,29 @@ let filterForm = {
     fill_preview: async function () {
         let questions = await this.filter()
         let preview = document.getElementById("preview")
+        let preview_quantity = document.getElementById("previewQuantity")
+        preview_quantity.innerHTML = "Se encontraron " + questions.length + " resultados"
         preview.classList = "row row-cols-4"
         let color;
-    switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")    ) {
-        case "foreign-language":
-            color = " #da1b0b";
-            break;
-        case "science":
-            color = "#1d950f";
-            break;
-        case "art":
-            color = "#ad6038";
-            break;
-        case "history":
-            color = "#e3701b";
-            break;
-        case "philosophy":
-            color = "#fee11e";
-            break;
-        default:
-            break;
-    }
+        switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")) {
+            case "foreign-language":
+                color = " #da1b0b";
+                break;
+            case "science":
+                color = "#1d950f";
+                break;
+            case "art":
+                color = "#ad6038";
+                break;
+            case "history":
+                color = "#e3701b";
+                break;
+            case "philosophy":
+                color = "#fee11e";
+                break;
+            default:
+                break;
+        }
         questions.forEach(question => {
             let prev = "<div class='col border border-5 me-3 mb-3 ms-4' style='width: 350px; " + "border-color: " + color + "!important'>"
             prev += "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + " (Nivel " + question.level + ")" + "<span style='float:right;'>" + question.time + " Segundos</span></p>"
@@ -79,7 +81,7 @@ function adapt(data) {
     if (data.User != undefined) {
         if (data.User.role == "T") {
             let options = document.getElementById("subject").options;
-            for (i=0; i<options.length; i++) {
+            for (i = 0; i < options.length; i++) {
                 if (data.User.subjects.find(element => element == options[i].value) != undefined) {
                     options[i].classList = "";
                     options[i].selected = true;
@@ -89,7 +91,7 @@ function adapt(data) {
         }
         else {
             let options = document.getElementById("subject").options;
-            for (i=0; i<options.length; i++) {
+            for (i = 0; i < options.length; i++) {
                 options[i].classList = "";
             }
         }
