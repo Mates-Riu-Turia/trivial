@@ -142,6 +142,21 @@ pub async fn get_questions(
     Err(ServiceError::Unauthorized.into())
 }
 
+pub async fn delete_question(
+    auth_data: AuthToken,
+    question: web::Json<i32>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, actix_web::Error> {
+    if let AuthToken::User(user) = auth_data {
+        web::block(move || {
+            delete_question_query(question.into_inner(), user.role, user.email, pool)
+        })
+        .await??;
+        return Ok(HttpResponse::Ok().finish());
+    }
+    Err(ServiceError::Unauthorized.into())
+}
+
 fn new_question_query(question: Question, pool: web::Data<Pool>) -> Result<(), ServiceError> {
     use crate::schema::questions::dsl::questions;
 
@@ -200,4 +215,31 @@ fn filter_question_query(
     }
 
     Ok(vec)
+}
+
+fn delete_question_query(
+    question_id: i32,
+    role: String,
+    email: String,
+    pool: web::Data<Pool>,
+) -> Result<(), ServiceError> {
+    use crate::schema::questions::dsl::*;
+
+    let mut conn = pool.get()?;
+
+    if role == *"T" {
+        if questions
+            .filter(id.eq(question_id))
+            .filter(creator.eq(email))
+            .load::<Question>(&mut conn)?
+            .is_empty()
+        {
+            return Err(ServiceError::Unauthorized);
+        }
+    }
+
+    match diesel::delete(questions.filter(id.eq(question_id))).execute(&mut conn) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ServiceError::InternalServerError),
+    }
 }

@@ -139,7 +139,9 @@ async fn main() -> std::io::Result<()> {
                             .route(web::patch().to(auth_handler::modify_password)),
                     )
                     .service(
-                        web::resource("/question").route(web::post().to(question::new_question)),
+                        web::resource("/question")
+                            .route(web::post().to(question::new_question))
+                            .route(web::delete().to(question::delete_question)),
                     )
                     .service(
                         web::resource("/filter_question")
