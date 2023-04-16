@@ -21,9 +21,9 @@ pub async fn register_user(
 ) -> Result<HttpResponse, actix_web::Error> {
     let user_data = user_data.into_inner();
 
-    if !(user_data.gender == String::from("B") || user_data.gender == String::from("G")) {
+    if !(user_data.gender == *"B" || user_data.gender == *"G") {
         return Err(actix_web::error::ErrorBadRequest("Missing gender"));
-    } else if !(user_data.role == String::from("A") || user_data.role == String::from("T")) {
+    } else if !(user_data.role == *"A" || user_data.role == *"T") {
         return Err(actix_web::error::ErrorBadRequest("Missing role"));
     }
     
@@ -44,8 +44,8 @@ fn query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), crate::error:
         &user_data.gender,
         &user_data.role,
     );
-    return match diesel::insert_into(users).values(&user).execute(&mut conn) {
+    match diesel::insert_into(users).values(&user).execute(&mut conn) {
         Ok(_) => Ok(()),
         Err(_) => Err(crate::error::ServiceError::InternalServerError),
-    };
+    }
 }

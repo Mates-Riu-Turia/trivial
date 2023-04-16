@@ -26,7 +26,7 @@ impl Config {
         let mut serialized = String::new();
         match file.read_to_string(&mut serialized) {
             Err(why) => panic!("couldn't read {}: {}", display, why),
-            Ok(_) => return serde_json::from_str(&serialized).unwrap(),
+            Ok(_) => serde_json::from_str(&serialized).unwrap(),
         }
     }
 }

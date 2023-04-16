@@ -29,19 +29,22 @@ pub struct TeacherQuestionData {
 
 impl TeacherQuestionData {
     pub fn to_question_model(self, creator: String) -> Question {
-        Question::from(
-            self.subject,
-            self.level,
-            self.question,
-            self.hide,
-            self.answers,
-            self.tries,
-            self.time,
-            self.image,
-            self.bigger,
-            self.verified,
-            creator,
-        )
+        Question {
+            id: 0,
+            subject: self.subject,
+            level: self.level,
+            question: self.question,
+            hide: self.hide,
+            answers: self.answers,
+            tries: self.tries,
+            time: self.time,
+            image: self.image,
+            bigger: self.bigger,
+            created_at: chrono::Local::now().naive_local(),
+            verified: self.verified,
+            modified: false,
+            creator
+        }
     }
 }
 
@@ -61,16 +64,17 @@ impl StudentQuestionData {
         name_creator: String,
         subject: String,
     ) -> StudentQuestion {
-        StudentQuestion::from(
+        StudentQuestion {
             course_creator,
             name_creator,
             subject,
-            self.level,
-            self.question,
-            self.answers,
-            self.tries,
-            self.time,
-        )
+            level: self.level,
+            question: self.question,
+            answers: self.answers,
+            tries: self.tries,
+            time: self.time,
+            created_at: chrono::Local::now().naive_local()
+        }
     }
 }
 
@@ -93,7 +97,7 @@ pub async fn new_question(
     match auth_data {
         AuthToken::User(auth_data) => {
             if let QuestionData::Teacher(question) = question {
-                if question.verified && auth_data.role == "T".to_string() {
+                if question.verified && auth_data.role == *"T" {
                     return Err(ServiceError::BadRequest(
                         "A teacher that isn't an admin cannot verify a question".to_string(),
                     )
@@ -141,10 +145,10 @@ fn new_question_query(question: Question, pool: web::Data<Pool>) -> Result<(), S
 
     let mut conn = pool.get()?;
 
-    return match insert_into(questions).values(&question).execute(&mut conn) {
+    match insert_into(questions).values(&question).execute(&mut conn) {
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
-    };
+    }
 }
 
 fn new_student_question_query(
@@ -155,13 +159,13 @@ fn new_student_question_query(
 
     let mut conn = pool.get()?;
 
-    return match insert_into(students_questions)
+    match insert_into(students_questions)
         .values(&question)
         .execute(&mut conn)
     {
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
-    };
+    }
 }
 
 fn filter_question_query(filter: Filter,  filter_user: String, pool: web::Data<Pool>) -> Result<Vec<Question>, ServiceError> {
