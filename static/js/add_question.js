@@ -345,7 +345,7 @@ function showPreview() {
     let body = document.getElementById("previewModalBody");
     body.style.setProperty("border-color", color, "important")
 
-    body.innerHTML = "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + "<span style='float:right;'>" + document.getElementById("timebar").value + " Segundos</span></p>";
+    body.innerHTML = "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + " (Nivel " + document.getElementById("level").value + ")" + "<span style='float:right;'>" + document.getElementById("timebar").value + " Segundos</span></p>";
     body.innerHTML += mainForm.question.value.replace(/(\n)+/g, '<br>');
 
     let answers = mainForm.answers().split(';');
