@@ -182,4 +182,9 @@ function prepare() {
     alertError.classList = "alert alert-danger alert-dismissible fade show";
   }
 
+  if (url.get("status") == "questionModifySuccess") {
+    messageSuccess.innerHTML = "La pregunta se modificó satisfactoriamente."
+    alertSuccess.classList = "alert alert-success alert-dismissible fade show";
+
+  }
 }

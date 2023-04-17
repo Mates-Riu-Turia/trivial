@@ -233,6 +233,47 @@
       </div>
     </div>
 
+    <!-- Modify options modal -->
+    <div class="modal fade" id="optionsModal" tabindex="-1" aria-labelledby="optionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="optionsModalLabel">Modificar pregunta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="btn-group-vertical" role="group" aria-label="Options">
+              <button type="button" class="btn btn-outline-primary">Moficar información de la pregunta <i class="bi bi-pen"></i></button>
+              <button type="button" class="btn btn-outline-danger" onclick="remove_question()">Eliminar la pregunta <i class="bi bi-trash"></i></button>
+              <button type="button" class="btn btn-outline-success" id="verify">Marcar la pregunta como verificada <i class="bi bi-check-all"></i></button>
+            </div>            
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>    
+
+    <!-- Sure modal -->
+    <div class="modal fade" id="sureModal" tabindex="-1" aria-labelledby="sureModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="sureModalLabel">Eliminar pregunta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ¿Estás verdaderamente seguro de que quieres eliminar esta pregunta, este es un cambio irreversible?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" onclick="remove_question_sure()">Eliminar pregunta</button>
+          </div>
+        </div>
+      </div>
+    </div>    
+
     <!-- Button group (Next and Discard) -->
     <div class="btn-group mb-5" role="group">
       <button type="button" class="btn btn-outline-primary" onclick="slide_previous()" id="previousButton" disabled><i
