@@ -150,6 +150,24 @@ function remove_question_sure() {
     })
 }
 
+function verify_question() {
+    fetch("/api/question", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: question_id
+    }).then(response => {
+        changes_saved = true
+        if (response.ok) {
+            window.location = "/?status=questionModifySuccess"
+        }
+        else {
+            window.location = "/?status=questionModifyError"
+        }
+    })
+}
+
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
 
 window.onbeforeunload = function () {

@@ -1,7 +1,7 @@
 use crate::{
     auth_handler::AuthToken,
     error::ServiceError,
-    models::{Pool, Question, StudentQuestion},
+    models::{Pool, Question, StudentQuestion}
 };
 use actix_web::{web, HttpResponse};
 use diesel::{insert_into, prelude::*};
@@ -157,6 +157,17 @@ pub async fn delete_question(
     Err(ServiceError::Unauthorized.into())
 }
 
+pub async fn verify_question(auth_data: AuthToken, question: web::Json<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, actix_web::Error> {
+    if let AuthToken::User(user) = auth_data {
+        if user.role == "A" {
+            web::block(move || verify_question_query(question.into_inner(), pool)).await??;
+            return Ok(HttpResponse::Ok().finish());
+        }
+        return Err(ServiceError::Unauthorized.into());
+    }
+    Err(ServiceError::Unauthorized.into())
+}
+
 fn new_question_query(question: Question, pool: web::Data<Pool>) -> Result<(), ServiceError> {
     use crate::schema::questions::dsl::questions;
 
@@ -239,6 +250,17 @@ fn delete_question_query(
     }
 
     match diesel::delete(questions.filter(id.eq(question_id))).execute(&mut conn) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ServiceError::InternalServerError),
+    }
+}
+
+fn verify_question_query(question_id: i32, pool: web::Data<Pool>) -> Result<(), ServiceError> {
+    use crate::schema::questions::dsl::*;
+
+    let mut conn = pool.get()?;
+
+    match diesel::update(questions.find(question_id)).set(verified.eq(true)).execute(&mut conn) {
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
     }

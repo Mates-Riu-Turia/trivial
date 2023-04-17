@@ -141,7 +141,8 @@ async fn main() -> std::io::Result<()> {
                     .service(
                         web::resource("/question")
                             .route(web::post().to(question::new_question))
-                            .route(web::delete().to(question::delete_question)),
+                            .route(web::delete().to(question::delete_question))
+                            .route(web::patch().to(question::verify_question)),
                     )
                     .service(
                         web::resource("/filter_question")
