@@ -1,4 +1,5 @@
 let is_admin = false;
+let question_id = 0;
 let changes_saved = false;
 
 let filterForm = {
@@ -65,7 +66,7 @@ let filterForm = {
                 break;
         }
         questions.forEach(question => {
-            let prev = "<div class='col border border-5 me-3 mb-3 ms-4' style='width: 350px; " + "border-color: " + color + "!important'>"
+            let prev = "<div class='col border border-5 me-3 mb-3 ms-4' style='width: 350px; " + "border-color: " + color + "!important' onclick='show_options_modal(" + question.id + ")'>"
             prev += "<p class='text-start'>" + document.getElementById("subject").options[document.getElementById("subject").selectedIndex].innerHTML + " (Nivel " + question.level + ")" + "<span style='float:right;'>" + question.time + " Segundos</span></p>"
             prev += question.question
             prev += "<br><img width='300' height='200' class='mb-3' src='" + question.image + "'></img>"
@@ -90,6 +91,7 @@ function adapt(data) {
             creator.add("d-none")
         }
         else {
+            is_admin = true
             let options = document.getElementById("subject").options;
             for (i = 0; i < options.length; i++) {
                 options[i].classList = "";
@@ -114,6 +116,38 @@ function slide_previous() {
     document.getElementById("previousButton").disabled = true
     document.getElementById("filters").classList = ""
     document.getElementById("preview").classList.add("d-none")
+    document.getElementById("preview").innerHTML = ""
+}
+
+function show_options_modal(id) {
+    question_id = id
+    let verify = document.getElementById("verify")
+    if (!is_admin) {
+        verify.classList.add("d-none")
+    }
+    new bootstrap.Modal("#optionsModal").show()
+}
+
+function remove_question() {
+    new bootstrap.Modal("#sureModal").show()
+}
+
+function remove_question_sure() {
+    fetch("/api/question", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: question_id
+    }).then(response => {
+        changes_saved = true
+        if (response.ok) {
+            window.location = "/?status=questionModifySuccess"
+        }
+        else {
+            window.location = "/?status=questionModifyError"
+        }
+    })
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
