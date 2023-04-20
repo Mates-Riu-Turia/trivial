@@ -81,6 +81,7 @@ impl StudentQuestionData {
 #[derive(Debug, Deserialize, Serialize)]
 
 pub struct Filter {
+    pub id: i32,
     pub subject: String,
     pub level: i32,
     pub start_date: chrono::NaiveDateTime,
@@ -204,6 +205,10 @@ fn filter_question_query(
     use crate::schema::questions::dsl::*;
 
     let mut conn = pool.get()?;
+
+    if filter.id != 0 {
+        return Ok(questions.filter(id.eq(filter.id)).load::<Question>(&mut conn)?);
+    }
 
     let data = questions
         .filter(subject.eq(filter.subject))

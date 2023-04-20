@@ -24,6 +24,7 @@ let filterForm = {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                id: 0,
                 subject: document.getElementById("subject").value,
                 level: parseInt(document.getElementById("level").value),
                 start_date: this.start_date(),
@@ -166,6 +167,11 @@ function verify_question() {
             window.location = "/?status=questionModifyError"
         }
     })
+}
+
+function modify_question() {
+    changes_saved = true
+    window.location = "/add_question?modifyId=" + question_id 
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))

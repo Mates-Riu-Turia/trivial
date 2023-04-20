@@ -4,6 +4,8 @@ let is_guest = false
 
 let question_saved = false
 
+let modify_question = false
+
 let mainForm = {
     question: document.getElementById("question"),
     answerTable: document.getElementById("answerTable"),
@@ -45,9 +47,19 @@ let imageForm = {
     imageInput: document.getElementById("image"),
     imagePreview: document.getElementById("previewImage"),
     bigImage: document.getElementById("big"),
+    updated: false,
     imageFile: File,
     verify: function () {
         this.imageInput.classList = "form-control mb-3"
+        if (modify_question == true) {
+            if (!this.updated) {
+                return true
+            }
+            if (this.imageFile.size > 1000000) {
+                this.imageInput.classList = "form-control mb-3 is-invalid"
+                return false
+            }
+        }
         if (this.imageFile.name == "File") {
             this.imageInput.classList = "form-control mb-3 is-invalid"
             return false
@@ -137,7 +149,7 @@ function adapt(data) {
             uploadForm.verify.checked = false
 
             let options = document.getElementById("subject").options;
-            for (i=0; i<options.length; i++) {
+            for (i = 0; i < options.length; i++) {
                 if (data.User.subjects.find(element => element == options[i].value) != undefined) {
                     options[i].classList = "";
                     options[i].selected = true;
@@ -146,7 +158,7 @@ function adapt(data) {
         }
         else {
             let options = document.getElementById("subject").options;
-            for (i=0; i<options.length; i++) {
+            for (i = 0; i < options.length; i++) {
                 options[i].classList = "";
             }
         }
@@ -242,7 +254,6 @@ function update_time(timebar) {
 
 function add_answer() {
     let answerInput = document.getElementById("answerInput")
-    let answerTable = document.getElementById("answerTable")
 
     answerInput.classList = "form-control"
 
@@ -250,12 +261,19 @@ function add_answer() {
         answerInput.classList = "form-control is-invalid"
     }
     else {
-        answerTable.innerHTML += '<li class="list-group-item d-flex" data-value="' + answerInput.value + '">' + answerInput.value + `<button
+        add_answer_know(answerInput.value)
+        answerInput.value = ""
+    }
+}
+
+function add_answer_know(answer) {
+    let answerTable = document.getElementById("answerTable")
+
+    answerInput.classList = "form-control"
+    answerTable.innerHTML += '<li class="list-group-item d-flex" data-value="' + answer + '">' + answer + `<button
         type="button" class="btn btn-danger position-absolute top-50 end-0 translate-middle-y h-100" onclick="this.parentNode.remove()">
         <i class="bi bi-trash"></i>
         </button></li>`
-        answerInput.value = ""
-    }
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))
@@ -322,7 +340,7 @@ function resizeImage() {
 
 function showPreview() {
     let color;
-    switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")    ) {
+    switch (document.getElementById("subject").options[document.getElementById("subject").selectedIndex].getAttribute("data-value")) {
         case "foreign-language":
             color = " #da1b0b";
             break;
@@ -350,7 +368,7 @@ function showPreview() {
 
     let answers = mainForm.answers().split(';');
     let list = "<ul class='list-group'>";
-    for (i=0; i<answers.length; i++) {
+    for (i = 0; i < answers.length; i++) {
         list += "<li class='list-group-item'>" + answers[i] + "</li>";
     }
 
@@ -362,4 +380,53 @@ function showPreview() {
     body.innerHTML += list + "</ul>";
 
     new bootstrap.Modal("#previewModal").show()
+}
+
+modify_question_prepare()
+
+async function modify_question_prepare() {
+
+    modify_question = true
+
+    let id = new URL(window.location.toLocaleString()).searchParams.get("modifyId");
+
+    if (id != undefined) {
+        const response = await fetch("/api/filter_question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: parseInt(id),
+                subject: "",
+                level: 0,
+                start_date: "2023-04-14T14:55:47.530641212",
+                end_date: "2023-04-14T14:55:47.530641212",
+                creator: 1
+            })
+        })
+
+        if (!response.ok) {
+            question_saved = true
+            window.location = "/?status=questionModifyError"
+        }
+        else {
+            let question = await response.json()
+            question = question[0]
+            document.getElementById("subject").value = question.subject
+            document.getElementById("level").value = question.level
+            mainForm.question.value = question.question.replace(/<br>/g, '\n')
+            question.answers.split(';').forEach(answer => {
+                add_answer_know(answer)
+            });
+            document.getElementById("previewImage").src = question.image
+            imageForm.bigImage = question.bigger
+            uploadForm.hide.checked = !question.hide
+            document.getElementById("tries").value = question.tries
+            let timebar = document.getElementById("timebar");
+            timebar.value = question.time
+            update_time(timebar) 
+            uploadForm.verify.checked = question.verified
+        }
+    }
 }
