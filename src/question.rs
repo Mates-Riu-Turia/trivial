@@ -93,8 +93,7 @@ pub struct FilterUser {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FilterGuest {
     pub subject: String,
-    pub course: i32,
-    pub class: String,
+    pub course: String,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -286,11 +285,9 @@ fn filter_student_question_query(
 
     use crate::schema::students_questions::dsl::*;
 
-    let course = format!("{}-{}", filter.course, filter.class);
-
     let data = students_questions
         .filter(subject.eq(filter.subject))
-        .filter(course_creator.eq(course))
+        .filter(course_creator.eq(filter.course))
         .load::<StudentQuestion>(&mut conn)?;
 
     Ok(data)

@@ -3,6 +3,7 @@ use actix_web::{dev::Payload, web, Error, FromRequest, HttpRequest, HttpResponse
 use diesel::prelude::*;
 use futures::future::{err, ok, Ready};
 use serde::{Deserialize, Serialize};
+use itertools::Itertools;
 
 use crate::error::ServiceError;
 use crate::models::{Course, Pool, User};
@@ -41,6 +42,7 @@ pub struct AuthUser {
     pub gender: String,
     pub role: String,
     pub subjects: Vec<String>,
+    pub courses: Vec<String>,
     pub expires_at: chrono::NaiveDateTime,
     pub password_changed: bool,
 }
@@ -136,8 +138,10 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
                 let mut subjects = Vec::new();
+                let mut courses = Vec::new();
                 if user.role == *"T" {
-                    subjects = query_teacher_subject(user.email.clone(), pool)?;
+                    subjects = query_teacher_subject(user.email.clone(), pool.clone())?;
+                    courses = query_teacher_course(user.email.clone(), pool)?;
                 }
                 return Ok(AuthToken::User(AuthUser {
                     name: user.name,
@@ -145,6 +149,7 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
                     gender: user.gender,
                     role: user.role,
                     subjects,
+                    courses,
                     expires_at: chrono::Local::now().naive_local() + chrono::Duration::days(1),
                     password_changed: user.password_changed,
                 }));
@@ -317,6 +322,168 @@ fn query_teacher_subject(
     }
 
     Ok(subjects)
+}
+
+fn query_teacher_course(email: String, pool: web::Data<Pool>) -> Result<Vec<String>, ServiceError> {
+    use crate::schema::courses::dsl::*;
+
+    let mut conn = pool.get()?;
+    let mut courses_vec = Vec::new();
+
+    let items = courses
+        .filter(anatomia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(english.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(biologia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(castellano.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(clasica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(dibuix.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(ed_fisica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(filosofia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(fisica_quimica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(frances.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(historia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses.filter(grec.eq(&email)).load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(informatica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(literatura.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses.filter(llati.eq(&email)).load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses.filter(mates.eq(&email)).load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(musica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(orientacio.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(plastica.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(religio.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(tecnologia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses
+        .filter(valencia.eq(&email))
+        .load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    let items = courses.filter(etica.eq(&email)).load::<Course>(&mut conn)?;
+    if !items.is_empty() {
+        courses_vec.push(items[0].id.clone());
+    }
+
+    Ok(courses_vec.into_iter().unique().collect::<Vec<_>>())
 }
 
 fn query_guest(auth_data: AuthDataGuest, pool: web::Data<Pool>) -> Result<AuthToken, ServiceError> {

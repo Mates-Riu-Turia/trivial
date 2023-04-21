@@ -176,6 +176,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_add_question_js)
             .service(publish_modify_question_js)
             .service(publish_student_question_html)
+            .service(publish_student_question_js)
             .service(actix_files::Files::new("/images", "images").prefer_utf8(true))
             .default_service(web::route().to(not_found))
     })
