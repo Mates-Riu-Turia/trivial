@@ -4,7 +4,8 @@ let is_guest = false
 
 let question_saved = false
 
-let modify_question = false
+let original_image = ""
+let question_id = 0
 
 let mainForm = {
     question: document.getElementById("question"),
@@ -71,17 +72,22 @@ let imageForm = {
         return true
     },
     upload: async function () {
-        const formData = new FormData();
-        formData.append("file", this.imageFile);
-        const response = await fetch("/api/image", {
-            method: 'POST',
-            body: formData
-        });
-        if (!response.ok) {
-            window.location = "/?status=questionAddImageError"
+        if (this.updated) {
+            const formData = new FormData();
+            formData.append("file", this.imageFile);
+            const response = await fetch("/api/image", {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) {
+                window.location = "/?status=questionAddImageError"
+            }
+            else {
+                return await response.text();
+            }
         }
         else {
-            return await response.text();
+            return original_image;
         }
     }
 };
@@ -120,6 +126,20 @@ let questionForm = {
         })
     },
     upload: async function () {
+        if (question_id != 0) {
+            fetch("/api/question", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: question_id
+            }).then(response => {
+                if (!response.ok) {
+                    question_saved = true
+                    window.location = "/?status=questionModifyError"
+                }
+            })
+        }
         fetch("/api/question", {
             method: "POST",
             headers: {
@@ -289,6 +309,7 @@ imageForm.bigImage.onchange = function () {
 }
 
 function resizeImage() {
+    imageForm.updated = true
     const [file] = imageForm.imageInput.files
     if (file) {
         if (file.type == "image/gif") {
@@ -414,6 +435,7 @@ async function modify_question_prepare() {
         else {
             let question = await response.json()
             question = question[0]
+            question_id = question.id
             document.getElementById("subject").value = question.subject
             document.getElementById("level").value = question.level
             mainForm.question.value = question.question.replace(/<br>/g, '\n')
@@ -421,12 +443,13 @@ async function modify_question_prepare() {
                 add_answer_know(answer)
             });
             document.getElementById("previewImage").src = question.image
-            imageForm.bigImage = question.bigger
+            imageForm.bigImage.checked = question.bigger
+            original_image = question.image
             uploadForm.hide.checked = !question.hide
             document.getElementById("tries").value = question.tries
             let timebar = document.getElementById("timebar");
             timebar.value = question.time
-            update_time(timebar) 
+            update_time(timebar)
             uploadForm.verify.checked = question.verified
         }
     }
