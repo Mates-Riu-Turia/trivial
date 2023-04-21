@@ -79,8 +79,7 @@ impl StudentQuestionData {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-
-pub struct Filter {
+pub struct FilterUser {
     pub id: i32,
     pub subject: String,
     pub level: i32,
@@ -88,6 +87,19 @@ pub struct Filter {
     pub end_date: chrono::NaiveDateTime,
     pub creator: i32,
     pub verified: bool,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FilterGuest {
+    pub subject: String,
+    pub course: i32,
+    pub class: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum Filter {
+    User(FilterUser),
+    Guest(FilterGuest),
 }
 
 pub async fn new_question(
@@ -203,7 +215,7 @@ fn new_student_question_query(
 }
 
 fn filter_question_query(
-    filter: Filter,
+    filter_raw: Filter,
     filter_user: String,
     pool: web::Data<Pool>,
 ) -> Result<Vec<Question>, ServiceError> {
@@ -211,51 +223,54 @@ fn filter_question_query(
 
     let mut conn = pool.get()?;
 
-    if filter.id != 0 {
-        return Ok(questions
-            .filter(id.eq(filter.id))
-            .load::<Question>(&mut conn)?);
-    }
-
-    let data = questions
-        .filter(subject.eq(filter.subject))
-        .filter(level.eq(filter.level))
-        .filter(created_at.ge(filter.start_date))
-        .filter(created_at.le(filter.end_date));
-
-    let vec;
-
-    if !filter.verified {
-        if filter.creator == 1 {
-            vec = data
-                .filter(verified.eq(false))
-                .load::<Question>(&mut conn)?;
-        } else if filter.creator == 2 {
-            vec = data
-                .filter(creator.eq(filter_user))
-                .filter(verified.eq(false))
-                .load::<Question>(&mut conn)?;
-        } else {
-            vec = data
-                .filter(creator.ne(filter_user))
-                .filter(verified.eq(false))
-                .load::<Question>(&mut conn)?;
+    if let Filter::User(filter) = filter_raw {
+        if filter.id != 0 {
+            return Ok(questions
+                .filter(id.eq(filter.id))
+                .load::<Question>(&mut conn)?);
         }
-    } else {
-        if filter.creator == 1 {
-            vec = data.load::<Question>(&mut conn)?;
-        } else if filter.creator == 2 {
-            vec = data
-                .filter(creator.eq(filter_user))
-                .load::<Question>(&mut conn)?;
-        } else {
-            vec = data
-                .filter(creator.ne(filter_user))
-                .load::<Question>(&mut conn)?;
-        }
-    }
 
-    Ok(vec)
+        let data = questions
+            .filter(subject.eq(filter.subject))
+            .filter(level.eq(filter.level))
+            .filter(created_at.ge(filter.start_date))
+            .filter(created_at.le(filter.end_date));
+
+        let vec;
+
+        if !filter.verified {
+            if filter.creator == 1 {
+                vec = data
+                    .filter(verified.eq(false))
+                    .load::<Question>(&mut conn)?;
+            } else if filter.creator == 2 {
+                vec = data
+                    .filter(creator.eq(filter_user))
+                    .filter(verified.eq(false))
+                    .load::<Question>(&mut conn)?;
+            } else {
+                vec = data
+                    .filter(creator.ne(filter_user))
+                    .filter(verified.eq(false))
+                    .load::<Question>(&mut conn)?;
+            }
+        } else {
+            if filter.creator == 1 {
+                vec = data.load::<Question>(&mut conn)?;
+            } else if filter.creator == 2 {
+                vec = data
+                    .filter(creator.eq(filter_user))
+                    .load::<Question>(&mut conn)?;
+            } else {
+                vec = data
+                    .filter(creator.ne(filter_user))
+                    .load::<Question>(&mut conn)?;
+            }
+        }
+
+        return Ok(vec);
+    }
+    Err(ServiceError::Unauthorized)
 }
 
 fn delete_question_query(
