@@ -417,7 +417,7 @@ async function modify_question_prepare() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
+            body: JSON.stringify({User: {
                 id: parseInt(id),
                 subject: "",
                 level: 0,
@@ -425,7 +425,7 @@ async function modify_question_prepare() {
                 end_date: "2023-04-14T14:55:47.530641212",
                 creator: 1,
                 verified: true,
-            })
+            }})
         })
 
         if (!response.ok) {

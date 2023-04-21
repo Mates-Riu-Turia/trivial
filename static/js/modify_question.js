@@ -23,7 +23,7 @@ let filterForm = {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
+            body: JSON.stringify({User: {
                 id: 0,
                 subject: document.getElementById("subject").value,
                 level: parseInt(document.getElementById("level").value),
@@ -31,7 +31,7 @@ let filterForm = {
                 end_date: this.end_date(),
                 creator: parseInt(document.querySelector("input[name='creator']:checked").value),
                 verified: !document.getElementById("verified").checked
-            })
+            }})
         })
         if (!response.ok) {
             changes_saved = true
