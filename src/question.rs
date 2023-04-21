@@ -65,6 +65,7 @@ impl StudentQuestionData {
         subject: String,
     ) -> StudentQuestion {
         StudentQuestion {
+            id: 0,
             course_creator,
             name_creator,
             subject,
@@ -149,9 +150,18 @@ pub async fn get_questions(
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
     if let AuthToken::User(user) = auth_data {
-        let data = web::block(move || filter_question_query(filter.into_inner(), user.email, pool))
-            .await??;
-        return Ok(HttpResponse::Ok().json(data));
+        match filter.into_inner() {
+            Filter::User(filter) => {
+                let data =
+                    web::block(move || filter_question_query(filter, user.email, pool)).await??;
+                return Ok(HttpResponse::Ok().json(data));
+            }
+            Filter::Guest(filter) => {
+                let data =
+                    web::block(move || filter_student_question_query(filter, pool)).await??;
+                return Ok(HttpResponse::Ok().json(data));
+            }
+        }
     }
     Err(ServiceError::Unauthorized.into())
 }
@@ -215,62 +225,75 @@ fn new_student_question_query(
 }
 
 fn filter_question_query(
-    filter_raw: Filter,
+    filter: FilterUser,
     filter_user: String,
     pool: web::Data<Pool>,
 ) -> Result<Vec<Question>, ServiceError> {
-    use crate::schema::questions::dsl::*;
-
     let mut conn = pool.get()?;
 
-    if let Filter::User(filter) = filter_raw {
-        if filter.id != 0 {
-            return Ok(questions
-                .filter(id.eq(filter.id))
-                .load::<Question>(&mut conn)?);
-        }
+    use crate::schema::questions::dsl::*;
 
-        let data = questions
-            .filter(subject.eq(filter.subject))
-            .filter(level.eq(filter.level))
-            .filter(created_at.ge(filter.start_date))
-            .filter(created_at.le(filter.end_date));
-
-        let vec;
-
-        if !filter.verified {
-            if filter.creator == 1 {
-                vec = data
-                    .filter(verified.eq(false))
-                    .load::<Question>(&mut conn)?;
-            } else if filter.creator == 2 {
-                vec = data
-                    .filter(creator.eq(filter_user))
-                    .filter(verified.eq(false))
-                    .load::<Question>(&mut conn)?;
-            } else {
-                vec = data
-                    .filter(creator.ne(filter_user))
-                    .filter(verified.eq(false))
-                    .load::<Question>(&mut conn)?;
-            }
-        } else {
-            if filter.creator == 1 {
-                vec = data.load::<Question>(&mut conn)?;
-            } else if filter.creator == 2 {
-                vec = data
-                    .filter(creator.eq(filter_user))
-                    .load::<Question>(&mut conn)?;
-            } else {
-                vec = data
-                    .filter(creator.ne(filter_user))
-                    .load::<Question>(&mut conn)?;
-            }
-        }
-
-        return Ok(vec);
+    if filter.id != 0 {
+        return Ok(questions
+            .filter(id.eq(filter.id))
+            .load::<Question>(&mut conn)?);
     }
-    Err(ServiceError::Unauthorized)
+
+    let data = questions
+        .filter(subject.eq(filter.subject))
+        .filter(level.eq(filter.level))
+        .filter(created_at.ge(filter.start_date))
+        .filter(created_at.le(filter.end_date));
+
+    let vec;
+
+    if !filter.verified {
+        if filter.creator == 1 {
+            vec = data
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        } else if filter.creator == 2 {
+            vec = data
+                .filter(creator.eq(filter_user))
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        } else {
+            vec = data
+                .filter(creator.ne(filter_user))
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        }
+    } else if filter.creator == 1 {
+        vec = data.load::<Question>(&mut conn)?;
+    } else if filter.creator == 2 {
+        vec = data
+            .filter(creator.eq(filter_user))
+            .load::<Question>(&mut conn)?;
+    } else {
+        vec = data
+            .filter(creator.ne(filter_user))
+            .load::<Question>(&mut conn)?;
+    }
+
+    Ok(vec)
+}
+
+fn filter_student_question_query(
+    filter: FilterGuest,
+    pool: web::Data<Pool>,
+) -> Result<Vec<StudentQuestion>, ServiceError> {
+    let mut conn = pool.get()?;
+
+    use crate::schema::students_questions::dsl::*;
+
+    let course = format!("{}-{}", filter.course, filter.class);
+
+    let data = students_questions
+        .filter(subject.eq(filter.subject))
+        .filter(course_creator.eq(course))
+        .load::<StudentQuestion>(&mut conn)?;
+
+    Ok(data)
 }
 
 fn delete_question_query(
@@ -283,15 +306,14 @@ fn delete_question_query(
 
     let mut conn = pool.get()?;
 
-    if role == *"T" {
-        if questions
+    if role == *"T"
+        && questions
             .filter(id.eq(question_id))
             .filter(creator.eq(email))
             .load::<Question>(&mut conn)?
             .is_empty()
-        {
-            return Err(ServiceError::Unauthorized);
-        }
+    {
+        return Err(ServiceError::Unauthorized);
     }
 
     match diesel::delete(questions.filter(id.eq(question_id))).execute(&mut conn) {

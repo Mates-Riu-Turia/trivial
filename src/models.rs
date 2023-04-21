@@ -53,6 +53,7 @@ pub struct Question {
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = students_questions)]
 pub struct StudentQuestion {
+    pub id: i32,
     pub course_creator: String,
     pub name_creator: String,
     pub subject: String,
