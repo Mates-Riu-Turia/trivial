@@ -102,6 +102,12 @@ pub enum Filter {
     Guest(FilterGuest),
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct DeleteQuestions {
+    pub id: i32,
+    pub is_guest: bool,
+}
+
 pub async fn new_question(
     auth_data: AuthToken,
     question: web::Json<QuestionData>,
@@ -167,14 +173,21 @@ pub async fn get_questions(
 
 pub async fn delete_question(
     auth_data: AuthToken,
-    question: web::Json<i32>,
+    question: web::Json<DeleteQuestions>,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
+    let question = question.into_inner();
     if let AuthToken::User(user) = auth_data {
-        web::block(move || {
-            delete_question_query(question.into_inner(), user.role, user.email, pool)
-        })
-        .await??;
+        if !question.is_guest {
+            web::block(move || delete_question_query(question.id, user.role, user.email, pool))
+                .await??;
+        } else {
+            web::block(move || {
+                delete_student_question_query(question.id, pool)
+            })
+            .await??;
+        }
+
         return Ok(HttpResponse::Ok().finish());
     }
     Err(ServiceError::Unauthorized.into())
@@ -314,6 +327,20 @@ fn delete_question_query(
     }
 
     match diesel::delete(questions.filter(id.eq(question_id))).execute(&mut conn) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(ServiceError::InternalServerError),
+    }
+}
+
+fn delete_student_question_query(
+    question_id: i32,
+    pool: web::Data<Pool>,
+) -> Result<(), ServiceError> {
+    use crate::schema::students_questions::dsl::*;
+
+    let mut conn = pool.get()?;
+
+    match diesel::delete(students_questions.filter(id.eq(question_id))).execute(&mut conn) {
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
     }

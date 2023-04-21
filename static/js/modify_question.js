@@ -23,15 +23,17 @@ let filterForm = {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({User: {
-                id: 0,
-                subject: document.getElementById("subject").value,
-                level: parseInt(document.getElementById("level").value),
-                start_date: this.start_date(),
-                end_date: this.end_date(),
-                creator: parseInt(document.querySelector("input[name='creator']:checked").value),
-                verified: !document.getElementById("verified").checked
-            }})
+            body: JSON.stringify({
+                User: {
+                    id: 0,
+                    subject: document.getElementById("subject").value,
+                    level: parseInt(document.getElementById("level").value),
+                    start_date: this.start_date(),
+                    end_date: this.end_date(),
+                    creator: parseInt(document.querySelector("input[name='creator']:checked").value),
+                    verified: !document.getElementById("verified").checked
+                }
+            })
         })
         if (!response.ok) {
             changes_saved = true
@@ -141,7 +143,10 @@ function remove_question_sure() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: question_id
+        body: JSON.stringify({
+            id: question_id,
+            is_guest: false,
+        })
     }).then(response => {
         changes_saved = true
         if (response.ok) {
@@ -173,7 +178,7 @@ function verify_question() {
 
 function modify_question() {
     changes_saved = true
-    window.location = "/add_question?modifyId=" + question_id 
+    window.location = "/add_question?modifyId=" + question_id
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (adapt(data)))

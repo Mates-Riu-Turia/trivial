@@ -89,6 +89,27 @@ function remove_question() {
     new bootstrap.Modal("#sureModal").show()
 }
 
+function remove_question_sure() {
+    fetch("/api/question", {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            id: question_id,
+            is_guest: true
+        })
+    }).then(response => {
+        changes_saved = true
+        if (response.ok) {
+            window.location = "/?status=questionModifySuccess"
+        }
+        else {
+            window.location = "/?status=questionModifyError"
+        }
+    })
+}
+
 function adapt(data) {
     if (data.User != undefined) {
         let options = document.getElementById("subject").options;
