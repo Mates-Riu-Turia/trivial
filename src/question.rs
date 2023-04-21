@@ -1,7 +1,7 @@
 use crate::{
     auth_handler::AuthToken,
     error::ServiceError,
-    models::{Pool, Question, StudentQuestion}
+    models::{Pool, Question, StudentQuestion},
 };
 use actix_web::{web, HttpResponse};
 use diesel::{insert_into, prelude::*};
@@ -87,6 +87,7 @@ pub struct Filter {
     pub start_date: chrono::NaiveDateTime,
     pub end_date: chrono::NaiveDateTime,
     pub creator: i32,
+    pub verified: bool,
 }
 
 pub async fn new_question(
@@ -158,7 +159,11 @@ pub async fn delete_question(
     Err(ServiceError::Unauthorized.into())
 }
 
-pub async fn verify_question(auth_data: AuthToken, question: web::Json<i32>, pool: web::Data<Pool>) -> Result<HttpResponse, actix_web::Error> {
+pub async fn verify_question(
+    auth_data: AuthToken,
+    question: web::Json<i32>,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, actix_web::Error> {
     if let AuthToken::User(user) = auth_data {
         if user.role == "A" {
             web::block(move || verify_question_query(question.into_inner(), pool)).await??;
@@ -207,7 +212,9 @@ fn filter_question_query(
     let mut conn = pool.get()?;
 
     if filter.id != 0 {
-        return Ok(questions.filter(id.eq(filter.id)).load::<Question>(&mut conn)?);
+        return Ok(questions
+            .filter(id.eq(filter.id))
+            .load::<Question>(&mut conn)?);
     }
 
     let data = questions
@@ -218,16 +225,34 @@ fn filter_question_query(
 
     let vec;
 
-    if filter.creator == 1 {
-        vec = data.load::<Question>(&mut conn)?;
-    } else if filter.creator == 2 {
-        vec = data
-            .filter(creator.eq(filter_user))
-            .load::<Question>(&mut conn)?;
+    if !filter.verified {
+        if filter.creator == 1 {
+            vec = data
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        } else if filter.creator == 2 {
+            vec = data
+                .filter(creator.eq(filter_user))
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        } else {
+            vec = data
+                .filter(creator.ne(filter_user))
+                .filter(verified.eq(false))
+                .load::<Question>(&mut conn)?;
+        }
     } else {
-        vec = data
-            .filter(creator.ne(filter_user))
-            .load::<Question>(&mut conn)?;
+        if filter.creator == 1 {
+            vec = data.load::<Question>(&mut conn)?;
+        } else if filter.creator == 2 {
+            vec = data
+                .filter(creator.eq(filter_user))
+                .load::<Question>(&mut conn)?;
+        } else {
+            vec = data
+                .filter(creator.ne(filter_user))
+                .load::<Question>(&mut conn)?;
+        }
     }
 
     Ok(vec)
@@ -265,7 +290,10 @@ fn verify_question_query(question_id: i32, pool: web::Data<Pool>) -> Result<(), 
 
     let mut conn = pool.get()?;
 
-    match diesel::update(questions.find(question_id)).set(verified.eq(true)).execute(&mut conn) {
+    match diesel::update(questions.find(question_id))
+        .set(verified.eq(true))
+        .execute(&mut conn)
+    {
         Ok(_) => Ok(()),
         Err(_) => Err(ServiceError::InternalServerError),
     }

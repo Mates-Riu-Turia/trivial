@@ -402,7 +402,8 @@ async function modify_question_prepare() {
                 level: 0,
                 start_date: "2023-04-14T14:55:47.530641212",
                 end_date: "2023-04-14T14:55:47.530641212",
-                creator: 1
+                creator: 1,
+                verified: true,
             })
         })
 

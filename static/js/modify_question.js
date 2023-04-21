@@ -29,7 +29,8 @@ let filterForm = {
                 level: parseInt(document.getElementById("level").value),
                 start_date: this.start_date(),
                 end_date: this.end_date(),
-                creator: parseInt(document.querySelector("input[name='creator']:checked").value)
+                creator: parseInt(document.querySelector("input[name='creator']:checked").value),
+                verified: !document.getElementById("verified").checked
             })
         })
         if (!response.ok) {
@@ -111,6 +112,7 @@ function slide_next() {
 }
 
 function slide_previous() {
+    document.getElementById("previewQuantity").innerHTML = ""
     document.getElementById("progressbar").style.width = "0%";
     document.getElementById("progress2").classList = "position-absolute top-0 start-100 translate-middle btn btn-sm btn-secondary rounded-pill"
     document.getElementById("nextButton").disabled = false
