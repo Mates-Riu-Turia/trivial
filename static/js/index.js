@@ -91,7 +91,7 @@ function name(data) {
   if (data.User != undefined) {
     divElement2.innerHTML = data.User.name
     if (index_page) {
-      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/modify_question'"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/student_question'"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
+      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/modify_question'"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/student_question'"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/statics'"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
       if (data.User.password_changed == false) {
         new bootstrap.Toast("#liveToast").show()
       }

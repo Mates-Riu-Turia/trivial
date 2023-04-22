@@ -48,6 +48,12 @@ async fn publish_student_question_html(_logged_user: auth_handler::AuthToken) ->
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/statics")]
+async fn publish_statics_html(_logged_user: auth_handler::AuthToken) -> Result<NamedFile> {
+    let path = PathBuf::from("static/statics.html");
+    Ok(NamedFile::open(path)?)
+}
+
 #[get("/static/js/color-modes.js")]
 async fn publish_color_modes_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/color-modes.js");
@@ -99,6 +105,12 @@ async fn publish_modify_question_js() -> Result<NamedFile> {
 #[get("/static/js/student_question.js")]
 async fn publish_student_question_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/student_question.js");
+    Ok(NamedFile::open(path)?)
+}
+
+#[get("/static/js/statics.js")]
+async fn publish_statics_js() -> Result<NamedFile> {
+    let path = PathBuf::from("static/js/statics.js");
     Ok(NamedFile::open(path)?)
 }
 
@@ -184,6 +196,8 @@ async fn main() -> std::io::Result<()> {
             .service(publish_student_question_html)
             .service(publish_student_question_js)
             .service(publish_not_found)
+            .service(publish_statics_html)
+            .service(publish_statics_js)
             .service(actix_files::Files::new("/images", "images").prefer_utf8(true))
             .default_service(web::route().to(not_found))
     })
