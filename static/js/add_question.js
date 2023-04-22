@@ -132,7 +132,10 @@ let questionForm = {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: question_id
+                body: JSON.stringify({
+                    id: question_id,
+                    is_guest: false
+                })
             }).then(response => {
                 if (!response.ok) {
                     question_saved = true
@@ -152,6 +155,7 @@ let questionForm = {
                 window.location = "/?status=questionAddSuccess"
             }
             else {
+                question_saved = true
                 window.location = "/?status=questionAddError"
             }
         })

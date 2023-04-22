@@ -10,6 +10,7 @@ let filterForm = {
             },
             body: JSON.stringify({
                 Guest: {
+                    id: 0,
                     subject: document.getElementById("subject").value,
                     course: document.getElementById("course").value
                 }
@@ -83,6 +84,76 @@ function slide_previous() {
 function show_options_modal(id) {
     question_id = id
     new bootstrap.Modal("#optionsModal").show()
+}
+
+async function add_question() {
+    await fetch("/api/filter_question", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            Guest: {
+                id: question_id,
+                subject: "",
+                course: ""
+            }
+        })
+    }).then(async response => {
+        if (response.ok) {
+            let data = await response.json()
+            await fetch("/api/question", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Teacher: {
+                        subject: data[0].subject,
+                        level: data[0].level,
+                        question: data[0].question,
+                        hide: false,
+                        answers: data[0].answers,
+                        tries: data[0].tries,
+                        time: data[0].time,
+                        image: "images/not-found.png",
+                        bigger: false,
+                        verified: false
+                    }
+                })
+            }).then(async  response => {
+                let id = await response.json()
+                if (response.ok) {
+                    await fetch("/api/question", {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            id: question_id,
+                            is_guest: true
+                        })
+                    }).then(response =>  {
+                        changes_saved = true
+                        if (response.ok) {
+                            window.location = "/add_question?modifyId=" + id
+                        }
+                        else {
+                            window.location = "/?status=questionModifyError"
+                        }
+                    })
+                }
+                else {
+                    changes_saved = true
+                    window.location = "/?status=questionModifyError"
+                }
+            })
+        }
+        else {
+            changes_saved = true
+            window.location = "/?status=questionModifyError"
+        }
+    })
 }
 
 function remove_question() {

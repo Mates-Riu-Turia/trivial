@@ -92,6 +92,7 @@ pub struct FilterUser {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FilterGuest {
+    pub id: i32,
     pub subject: String,
     pub course: String,
 }
@@ -114,6 +115,7 @@ pub async fn new_question(
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
     let question = question.into_inner();
+    let mut id = 0;
     match auth_data {
         AuthToken::User(auth_data) => {
             if let QuestionData::Teacher(question) = question {
@@ -124,7 +126,7 @@ pub async fn new_question(
                     .into());
                 }
                 let question = question.to_question_model(auth_data.email);
-                web::block(move || new_question_query(question, pool)).await??;
+                id = web::block(move || new_question_query(question, pool)).await??;
             } else {
                 return Err(
                     ServiceError::BadRequest("Unexpected question format".to_string()).into(),
@@ -146,7 +148,7 @@ pub async fn new_question(
             }
         }
     };
-    Ok(HttpResponse::Ok().finish())
+    Ok(HttpResponse::Ok().json(id))
 }
 
 pub async fn get_questions(
@@ -208,13 +210,15 @@ pub async fn verify_question(
     Err(ServiceError::Unauthorized.into())
 }
 
-fn new_question_query(question: Question, pool: web::Data<Pool>) -> Result<(), ServiceError> {
-    use crate::schema::questions::dsl::questions;
+fn new_question_query(question_data: Question, pool: web::Data<Pool>) -> Result<i32, ServiceError> {
+    use crate::schema::questions::dsl::*;
 
     let mut conn = pool.get()?;
 
-    match insert_into(questions).values(&question).execute(&mut conn) {
-        Ok(_) => Ok(()),
+    match insert_into(questions).values(&question_data).execute(&mut conn) {
+        Ok(_) => {
+            Ok(questions.order(id.desc()).first::<Question>(&mut conn)?.id)
+        },
         Err(_) => Err(ServiceError::InternalServerError),
     }
 }
@@ -297,6 +301,14 @@ fn filter_student_question_query(
     let mut conn = pool.get()?;
 
     use crate::schema::students_questions::dsl::*;
+
+    if filter.id != 0 {
+        let data = students_questions
+            .filter(id.eq(filter.id))
+            .load::<StudentQuestion>(&mut conn)?;
+
+        return Ok(data);
+    }
 
     let data = students_questions
         .filter(subject.eq(filter.subject))

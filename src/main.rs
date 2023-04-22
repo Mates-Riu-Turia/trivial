@@ -12,6 +12,12 @@ async fn publish_favicon() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[get("/images/not-found.png")]
+async fn publish_not_found() -> Result<NamedFile> {
+    let path = PathBuf::from("static/images/not-found.png");
+    Ok(NamedFile::open(path)?)
+}
+
 #[get("/")]
 async fn publish_index(_logged_user: auth_handler::AuthToken) -> Result<NamedFile> {
     let path = PathBuf::from("static/index.html");
@@ -177,6 +183,7 @@ async fn main() -> std::io::Result<()> {
             .service(publish_modify_question_js)
             .service(publish_student_question_html)
             .service(publish_student_question_js)
+            .service(publish_not_found)
             .service(actix_files::Files::new("/images", "images").prefer_utf8(true))
             .default_service(web::route().to(not_found))
     })
