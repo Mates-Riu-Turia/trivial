@@ -25,7 +25,7 @@ For installing it:
 - Install MySql or MariaDB and it's binary library.
 - Install Rust Lang.
 - Install Rust Diesel (``cargo install diesel_cli --no-default-features --features mysql``)
-- Clone this repo into your working directory (``git clone https:://github.com/asensio_project/trivial_packager``)
+- Clone this repo into your working directory (``git clone https:://github.com/asensio-project/trivial_packager``)
 - Modify diesel.toml with your MySql user
 - Execute ``diesel migration run`` for creating DB tables
 - Modify config.toml for configuring the port and the server
