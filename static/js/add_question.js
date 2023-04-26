@@ -337,12 +337,36 @@ function resizeImage() {
                     if (imageForm.bigImage.checked == true) {
                         canvas.width = 600;
                         canvas.height = 400;
-                        ctx.drawImage(img, 0, 0, 600, 400);
+                        if (img.width / img.height == 1.5) {
+                            ctx.drawImage(img, 0, 0, 600, 400);
+                        }
+                        else if (img.width > img.height) {
+                            let width;
+                            for (width = img.width*2; (img.width/img.height)*width > 400  || width > 600; width--) {}
+                            ctx.drawImage(img, (600 - width) / 2, (400 - (img.width/img.height)*width) / 2, width, (img.width/img.height)*width);
+                        }
+                        else {
+                            let height;
+                            for (height = img.height*2; (img.width/img.height)*height > 600 || height > 400; height--) {}
+                            ctx.drawImage(img, (600 - (img.width/img.height)*height)  / 2, (400 - height) / 2, (img.width/img.height)*height, height);
+                        }
                     }
                     else {
                         canvas.width = 300;
                         canvas.height = 200;
-                        ctx.drawImage(img, 0, 0, 300, 200);
+                        if (img.width / img.height == 1.5) {
+                            ctx.drawImage(img, 0, 0, 300, 200);
+                        }
+                        else if (img.width > img.height) {
+                            let width;
+                            for (width = img.width; (img.width/img.height)*width > 200  || width > 300; width--) {}
+                            ctx.drawImage(img, (300 - width) / 2, (200 - (img.width/img.height)*width) / 2, width, (img.width/img.height)*width);
+                        }
+                        else {
+                            let height;
+                            for (height = img.height; (img.width/img.height)*height > 300 || height > 200; height--) {}
+                            ctx.drawImage(img, (300 - (img.width/img.height)*height)  / 2, (200 - height) / 2, (img.width/img.height)*height, height);
+                        }
                     }
 
                     // We get the URL and put it as the src of the previewImage
