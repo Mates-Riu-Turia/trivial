@@ -95,8 +95,6 @@ pub async fn login(
     id: Identity,
     pool: web::Data<Pool>,
 ) -> Result<HttpResponse, actix_web::Error> {
-    //let pool_clone = pool.clone();
-
     let user = match auth_data.into_inner() {
         AuthData::User(user) => web::block(move || query_user(user, pool)).await??,
         AuthData::Guest(guest) => web::block(move || query_guest(guest, pool)).await??,
@@ -138,11 +136,10 @@ fn query_user(auth_data: AuthDataUser, pool: web::Data<Pool>) -> Result<AuthToke
         if let Ok(matching) = verify(&user.hash, &auth_data.password) {
             if matching {
                 let mut subjects = Vec::new();
-                let mut courses = Vec::new();
                 if user.role == *"T" {
                     subjects = query_teacher_subject(user.email.clone(), pool.clone())?;
-                    courses = query_teacher_course(user.email.clone(), pool)?;
                 }
+                let courses = query_teacher_course(user.email.clone(), pool)?;
                 return Ok(AuthToken::User(AuthUser {
                     name: user.name,
                     email: user.email,

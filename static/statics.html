@@ -124,12 +124,52 @@
     </nav>
   </header>
 
-  <main class="m-auto text-center">
+  <div id="overlay" class="overlay">
+    <div class="d-flex justify-content-center">
+      <img src="/favicon.ico">
+      <div class="spinner-border p-5" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+
+
+  <main class="m-auto text-center" id="main">
     <h1 class="mt-5">Estadistica</h1>
 
     <div>
       <canvas id="subjectsChart"></canvas>
     </div>
+
+    <div class="form-floating mt-3 mb-3 d-none" id="subjectSelector">
+      <select class="form-select" id="subject" onchange="subjectSelected(this)">
+        <option value="anatomia" data-value="art">Anatomia Aplicada</option>
+        <option value="english" data-value="foreign-language">Anglès</option>
+        <option value="biologia" data-value="science">Biologia i Geologia</option>
+        <option value="castellano" data-value="language">Castellano</option>
+        <option value="clasica" data-value="history">Cultura Clàssica</option>
+        <option value="dibuix" data-value="art">Dibuix Tècnic</option>
+        <option value="ed_fisica" data-value="art">Educació Física</option>
+        <option value="filosofia" data-value="philosophy">Filosofia</option>
+        <option value="fisica_quimica" data-value="science">Física i Química</option>
+        <option value="frances" data-value="foreign-language">Francès</option>
+        <option value="historia" data-value="history">Geografia i Història</option>
+        <option value="grec" data-value="foreign-language">Grec</option>
+        <option value="informatica" data-value="science">Informàtica</option>
+        <option value="literatura" data-value="language">Literatura Universal</option>
+        <option value="llati" data-value="foreign-language">Llatí</option>
+        <option value="mates" data-value="science">Matemàtiques</option>
+        <option value="musica" data-value="art">Música</option>
+        <option value="orientacio" data-value="philosophy">Orientació i Tutoria</option>
+        <option value="plastica" data-value="art">Plàstica</option>
+        <option value="religio" data-value="philosophy">Religions</option>
+        <option value="tecnologia" data-value="science">Tecnologia</option>
+        <option value="valencia" data-value="language">Valencià</option>
+        <option value="etica" data-value="philosophy">Valors Étics</option>
+      </select>
+      <label for="subject">Elija su asignatura</label>
+    </div>
+
 
     <!-- Change password modal -->
     <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel"

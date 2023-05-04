@@ -3,7 +3,7 @@ function Static(subject, quantity) {
     this.quantity = quantity
 }
 
-async function get_statics(subjects) {
+async function get_statics(subjects, creator) {
     let total = []
     for (let i = 0; i < subjects.length; i++) {
         let subject = subjects[i]
@@ -21,7 +21,7 @@ async function get_statics(subjects) {
                     level: 0,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -45,7 +45,7 @@ async function get_statics(subjects) {
                     level: 1,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -69,7 +69,7 @@ async function get_statics(subjects) {
                     level: 2,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -93,7 +93,7 @@ async function get_statics(subjects) {
                     level: 3,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -117,7 +117,7 @@ async function get_statics(subjects) {
                     level: 4,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -141,7 +141,7 @@ async function get_statics(subjects) {
                     level: 5,
                     start_date: "1970-06-01T14:55:47.530641212",
                     end_date: "2999-04-14T14:55:47.530641212",
-                    creator: 2,
+                    creator: creator,
                     verified: true
                 }
             })
@@ -174,8 +174,6 @@ function insertAfter(referenceNode, newNode) {
 function get_level_statics(static) {
     let reference = "subjectsChart"
     static.forEach(subject => {
-        //document.getElementById("charts").innerHTML += "<div><canvas id='" + subject.subject + "Chart'></canvas></div>"
-
         let container = document.createElement("div")
         let canvas = document.createElement("canvas")
         canvas.id = subject.subject
@@ -209,34 +207,84 @@ function get_level_statics(static) {
     })
 }
 
+async function subjectSelected(subject) {
+    let subjectArray = []
+    subjectArray.push(subject.value)
+    let statics = await get_statics(subjectArray, 1)
+    console.log(statics)
+    get_level_statics(statics)
+} 
+
 window.addEventListener('load', async function () {
+    document.getElementById("main").classList = "d-none"
     let user
 
     await fetch("/api/auth").then((response) => response.json()).then((data) => (user = data))
 
     user = user.User
 
-    let statics = await get_statics(user.subjects)
+    if (user.role == "T") {
 
-    new Chart(document.getElementById('subjectsChart'), {
-        type: 'pie',
-        data: {
-            labels: user.subjects,
-            datasets: [{
-                label: 'Número de preguntas',
-                data: await get_global_statics(statics),
-                borderWidth: 1
-            }]
-        },
-        options: {
-            plugins: {
-                title: {
-                    display: true,
-                    text: "Número de preguntas por asignatura"
+        let statics = await get_statics(user.subjects, 2)
+
+        new Chart(document.getElementById('subjectsChart'), {
+            type: 'pie',
+            data: {
+                labels: user.subjects,
+                datasets: [{
+                    label: 'Número de preguntas',
+                    data: await get_global_statics(statics),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Número de preguntas por asignatura"
+                    }
                 }
             }
-        }
-    })
-
-    get_level_statics(statics)
+        })
+        document.getElementById("overlay").classList = "d-none"
+        document.getElementById("main").classList = "m-auto text-center"
+        get_level_statics(statics)
+    }
+    else {
+        let subjects = ["anatomia", "english", "biologia", "castellano", "clasica", "dibuix", "ed_fisica", "filosofia", "fisica_quimica", "frances", "historia", "grec", "informatica", "literatura", "llati", "mates", "musica", "orientacio", "plastica", "religio", "tecnologia", "valencia", "etica"];
+        let statics = await get_statics(subjects, 1)
+        staticGlobal = statics
+        let global = await get_global_statics(statics)
+        document.getElementById("main").classList = "m-auto text-center"
+        document.getElementById("overlay").classList = "d-none"
+        document.getElementById("subjectSelector").classList = "form-floating mt-3 mb-3"
+        let chart = new Chart(document.getElementById('subjectsChart'), {
+            type: 'bar',
+            data: {
+                labels: subjects,
+                datasets: [{
+                    label: 'Número de preguntas',
+                    data: global,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scaleShowValues: true,
+                scales: {
+                    x: {
+                      ticks: {
+                        autoSkip: false
+                      }
+                    }
+                  },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Número de preguntas por asignatura"
+                    }
+                }
+            }
+        })
+        chart.resize(600, 400)
+    }
 })
