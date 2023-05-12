@@ -120,6 +120,10 @@
                   <button type="button" class="dropdown-item d-flex align-items-center" onclick="logout()"><i
                       class="bi bi-box-arrow-right"></i>&nbsp;Cerrar sesión</button>
                 </li>
+                <li>
+                  <button id="flushButton" type="button" class="dropdown-item d-flex align-items-center d-none" onclick="flush_users()"><i
+                      class="bi bi-rocket-takeoff"></i>&nbsp;Limpiar usuarios</button>
+                </li>
               </ul>
             </li>
           </ul>
@@ -189,6 +193,25 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
             <button type="button" class="btn btn-primary" onclick="modifyPassword()">Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sure modal -->
+    <div class="modal fade" id="sureModal" tabindex="-1" aria-labelledby="sureModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="sureModalLabel">Eliminar pregunta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ¿Estás verdaderamente seguro de que quieres reinicializar los cursos, este es un cambio irreversible?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-danger" onclick="flush_users_sure()">Limpiar usuarios</button>
           </div>
         </div>
       </div>

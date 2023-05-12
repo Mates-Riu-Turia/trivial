@@ -172,7 +172,8 @@ async fn main() -> std::io::Result<()> {
                 web::scope("/api")
                     .service(
                         web::resource("/add_user")
-                            .route(web::post().to(register_handler::register_user)),
+                            .route(web::post().to(register_handler::register_user))
+                            .route(web::get().to(register_handler::flush_users)),
                     )
                     .service(
                         web::resource("/auth")

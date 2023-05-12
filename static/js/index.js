@@ -101,6 +101,11 @@ function name(data) {
       else {
         divElement.innerHTML = "Bienvenida " + data.User.name
       }
+
+      if (data.User.role == "A") {
+        document.getElementById("flushButton").classList = "dropdown-item d-flex align-items-center"
+      }
+
       resize()
     }
   }
@@ -134,6 +139,14 @@ function resize() {
       buttons_array[i].style.width = elemWidth + "px"
     }
   }
+}
+
+function flush_users() {
+  new bootstrap.Modal("#sureModal").show()
+}
+
+async function flush_users_sure() {
+  await fetch("/api/add_user").ok
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (name(data)))

@@ -63,3 +63,20 @@ function slide_previous() {
 
         document.getElementById("add_course_div").classList = "input-group mb-3 d-none"
 }
+
+async function upload() {
+    await fetch("/api/add_user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: document.getElementById("f-name").value,
+            email: document.getElementById("email").value,
+            gender: document.querySelector("input[name='gender']:checked").value,
+            courses: courses
+        })
+    })
+
+    window.location = "/login"
+}
