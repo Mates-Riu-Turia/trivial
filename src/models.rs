@@ -46,7 +46,6 @@ pub struct Question {
     pub bigger: bool,
     pub created_at: chrono::NaiveDateTime,
     pub verified: bool,
-    pub modified: bool,
     pub creator: String,
 }
 

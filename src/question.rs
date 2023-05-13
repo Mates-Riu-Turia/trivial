@@ -42,7 +42,6 @@ impl TeacherQuestionData {
             bigger: self.bigger,
             created_at: chrono::Local::now().naive_local(),
             verified: self.verified,
-            modified: false,
             creator,
         }
     }

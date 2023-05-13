@@ -43,7 +43,6 @@ diesel::table! {
         bigger -> Bool,
         created_at -> Timestamp,
         verified -> Bool,
-        modified -> Bool,
         creator -> Varchar,
     }
 }
@@ -75,4 +74,9 @@ diesel::table! {
     }
 }
 
-diesel::allow_tables_to_appear_in_same_query!(courses, questions, students_questions, users,);
+diesel::allow_tables_to_appear_in_same_query!(
+    courses,
+    questions,
+    students_questions,
+    users,
+);
