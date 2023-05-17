@@ -7,27 +7,43 @@ use actix_web::{web, HttpResponse};
 use diesel::{insert_into, prelude::*};
 use serde::{Deserialize, Serialize};
 
+
+/// This enum holds the question sended by the client, the question can be from a teacher or from a guest
 #[derive(Debug, Deserialize, Serialize)]
 pub enum QuestionData {
+    /// The teacher variant
     Teacher(TeacherQuestionData),
+    /// The guest variant
     Guest(StudentQuestionData),
 }
 
+/// A struct with the question created by the teacher
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TeacherQuestionData {
+    /// The subject of the question
     pub subject: String,
+    /// The level of the question
     pub level: i32,
+    /// The question body
     pub question: String,
+    /// If true, doesn't show the correct answer if you failed the question
     pub hide: bool,
+    /// A list with the possible answers
     pub answers: String,
+    /// The number of tries for a question, range between 1 and 3
     pub tries: i32,
+    /// The amount of time for ansering, 30 seconds to 150 seconds
     pub time: i32,
+    /// The path of the associated image, it is returned by api/image
     pub image: String,
+    /// If true, shows the image much bigger
     pub bigger: bool,
+    /// Is the question ready for the Trivial? Only can be changed to true if you are an admin
     pub verified: bool,
 }
 
 impl TeacherQuestionData {
+    /// Converts the TeacherQuestionData to the Diesel Table format
     pub fn to_question_model(self, creator: String) -> Question {
         Question {
             id: 0,
@@ -47,16 +63,23 @@ impl TeacherQuestionData {
     }
 }
 
+/// A struct with the question created by the guest/student
 #[derive(Debug, Deserialize, Serialize)]
 pub struct StudentQuestionData {
+    /// The level of the question
     pub level: i32,
+    /// The question body
     pub question: String,
+    /// A list with the possible answers
     pub answers: String,
+    /// The number of tries for a question, range between 1 and 3
     pub tries: i32,
+    /// The amount of time for ansering, 30 seconds to 150 seconds
     pub time: i32,
 }
 
 impl StudentQuestionData {
+    /// Converts the StudentQuestionData to the Diesel Table format
     pub fn to_question_model(
         self,
         course_creator: String,
@@ -78,36 +101,55 @@ impl StudentQuestionData {
     }
 }
 
+/// This struct is sended by the client, is used for filtering questions
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FilterUser {
+    /// The question id, if it's equal to 0 it will be skiped
     pub id: i32,
+    /// The subject of the question
     pub subject: String,
+    /// The level of the question
     pub level: i32,
+    /// The start date for search
     pub start_date: chrono::NaiveDateTime,
+    /// The end date for search
     pub end_date: chrono::NaiveDateTime,
+    /// The creator,  1 -> All the users, 2 -> Only me, 3 -> All except me, if you are normal user only 2 is valid
     pub creator: i32,
+    /// If the question is verified or not
     pub verified: bool,
 }
 
+/// The same as FilterUser but for the guests questions
 #[derive(Debug, Deserialize, Serialize)]
 pub struct FilterGuest {
+    /// The question id, if it's equal to 0 it will be skiped
     pub id: i32,
+    /// The subject of the question
     pub subject: String,
+    /// The course of the guest
     pub course: String,
 }
 
+/// An enum that joins FilterUser and FilterGuest
 #[derive(Debug, Deserialize, Serialize)]
 pub enum Filter {
+    /// The variant for users questions
     User(FilterUser),
+    /// The variant for guests questions
     Guest(FilterGuest),
 }
 
+/// An struct for deleting a question
 #[derive(Debug, Deserialize, Serialize)]
 pub struct DeleteQuestions {
+    /// The id of the question
     pub id: i32,
+    /// If the question is from the user or from the guest
     pub is_guest: bool,
 }
 
+/// Creates a new question
 pub async fn new_question(
     auth_data: AuthToken,
     question: web::Json<QuestionData>,
@@ -150,6 +192,7 @@ pub async fn new_question(
     Ok(HttpResponse::Ok().json(id))
 }
 
+/// Filter the questions
 pub async fn get_questions(
     auth_data: AuthToken,
     filter: web::Json<Filter>,
@@ -172,6 +215,7 @@ pub async fn get_questions(
     Err(ServiceError::Unauthorized.into())
 }
 
+/// Delete a question
 pub async fn delete_question(
     auth_data: AuthToken,
     question: web::Json<DeleteQuestions>,
@@ -183,10 +227,7 @@ pub async fn delete_question(
             web::block(move || delete_question_query(question.id, user.role, user.email, pool))
                 .await??;
         } else {
-            web::block(move || {
-                delete_student_question_query(question.id, pool)
-            })
-            .await??;
+            web::block(move || delete_student_question_query(question.id, pool)).await??;
         }
 
         return Ok(HttpResponse::Ok().finish());
@@ -194,6 +235,7 @@ pub async fn delete_question(
     Err(ServiceError::Unauthorized.into())
 }
 
+/// Mark a question as verified
 pub async fn verify_question(
     auth_data: AuthToken,
     question: web::Json<i32>,
@@ -214,10 +256,11 @@ fn new_question_query(question_data: Question, pool: web::Data<Pool>) -> Result<
 
     let mut conn = pool.get()?;
 
-    match insert_into(questions).values(&question_data).execute(&mut conn) {
-        Ok(_) => {
-            Ok(questions.order(id.desc()).first::<Question>(&mut conn)?.id)
-        },
+    match insert_into(questions)
+        .values(&question_data)
+        .execute(&mut conn)
+    {
+        Ok(_) => Ok(questions.order(id.desc()).first::<Question>(&mut conn)?.id),
         Err(_) => Err(ServiceError::InternalServerError),
     }
 }

@@ -1,3 +1,5 @@
+#![allow(missing_docs)]
+
 use crate::schema::*;
 use diesel::{prelude::*, r2d2::ConnectionManager, MysqlConnection};
 use serde::{Deserialize, Serialize};

@@ -60,7 +60,6 @@ async fn publish_register() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
-
 #[get("/static/js/color-modes.js")]
 async fn publish_color_modes_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/color-modes.js");

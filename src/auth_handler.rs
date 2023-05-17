@@ -2,63 +2,97 @@ use actix_identity::Identity;
 use actix_web::{dev::Payload, web, Error, FromRequest, HttpRequest, HttpResponse};
 use diesel::prelude::*;
 use futures::future::{err, ok, Ready};
-use serde::{Deserialize, Serialize};
 use itertools::Itertools;
+use serde::{Deserialize, Serialize};
 
 use crate::error::ServiceError;
 use crate::models::{Course, Pool, User};
 use crate::util::verify;
 
+/// The login data for teacher sended by the client
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AuthDataUser {
+    /// Email
     pub email: String,
+    /// Password
     pub password: String,
 }
 
+/// The login data for guest sended by the client
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AuthDataGuest {
+    /// The guest's teacher email
     pub teacher_email: String,
+    /// The full name of the guest
     pub name: String,
+    /// The course/level
     pub course: String,
+    /// The class/group
     pub class: String,
+    /// The subject
     pub subject: String,
 }
 
+/// An enum with login data sended by the client, the two possible options are: User/Teacher and Guest
 #[derive(Debug, Deserialize, Serialize)]
 pub enum AuthData {
+    /// The user or teacher variant
     User(AuthDataUser),
+    /// The guest or student variant
     Guest(AuthDataGuest),
 }
+
+/// An enum with the auth cookie, the two possible options are: User/Teacher and Guest
 #[derive(Debug, Deserialize, Serialize)]
 pub enum AuthToken {
+    /// The user or teacher variant
     User(AuthUser),
+    /// The guest or student variant
     Guest(AuthGuest),
 }
 
+/// The cookie data for users
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AuthUser {
+    /// Full name
     pub name: String,
+    /// Email
     pub email: String,
+    /// Gender (boy/girl)
     pub gender: String,
+    /// Role (admin/teacher)
     pub role: String,
+    /// A vector with the subjects that teaches
     pub subjects: Vec<String>,
+    /// A vector with the courses that teaches
     pub courses: Vec<String>,
+    /// The caducity of the session (24h)
     pub expires_at: chrono::NaiveDateTime,
+    /// The password has changed from the default one
     pub password_changed: bool,
 }
 
+/// The cookie data for guests
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AuthGuest {
+    /// The guest's teacher email
     pub teacher_email: String,
+    /// The full name of the guest
     pub name: String,
+    /// The course or level of the guest
     pub course: String,
+    /// The class or group of the guest
     pub class: String,
+    /// The subject of the guest
     pub subject: String,
+    /// The caducity of the session (24h)
     pub expires_at: chrono::NaiveDateTime,
 }
 
+/// An struct with the new password of the user (update password)
 #[derive(Debug, Deserialize, Serialize)]
 pub struct NewPassword {
+    /// The new password of the user
     pub password: String,
 }
 
@@ -85,11 +119,13 @@ impl FromRequest for AuthToken {
     }
 }
 
+/// This removes the auth cookie
 pub async fn logout(id: Identity) -> HttpResponse {
     id.forget();
     HttpResponse::Ok().json("")
 }
 
+/// A function that verify the auth data and if it's correct returns the auth cookie
 pub async fn login(
     auth_data: web::Json<AuthData>,
     id: Identity,
@@ -107,10 +143,12 @@ pub async fn login(
     Ok(HttpResponse::Ok().finish())
 }
 
+/// A function that returns the data of the user/guest
 pub async fn get_me(logged_user: AuthToken) -> HttpResponse {
     HttpResponse::Ok().json(logged_user)
 }
 
+/// A function for modifying the password of a teacher
 pub async fn modify_password(
     logged_user: AuthToken,
     password: web::Json<NewPassword>,

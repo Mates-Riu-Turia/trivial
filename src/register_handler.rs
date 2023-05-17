@@ -3,17 +3,25 @@ use actix_web::{web, HttpResponse};
 use diesel::prelude::*;
 use serde::{Deserialize, Serialize};
 
-use crate::{models::{Pool, User}, auth_handler, error};
 use crate::util::hash_password;
-// UserData is used to extract data from a post request by the client
+use crate::{
+    auth_handler, error,
+    models::{Pool, User},
+};
+/// UserData is used to extract data for creating a user from a post request by the client
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserData {
+    /// The full name
     pub name: String,
+    /// The email
     pub email: String,
+    /// The gender (boy/girl)
     pub gender: String,
+    /// A vector with the classes of every teacher
     pub courses: Vec<String>,
 }
 
+/// Creates a new user and assigns the classes
 pub async fn register_user(
     user_data: web::Json<UserData>,
     pool: web::Data<Pool>,
@@ -29,18 +37,25 @@ pub async fn register_user(
     Ok(HttpResponse::Ok().finish())
 }
 
-pub async fn flush_users(logged_user: auth_handler::AuthToken, pool: web::Data<Pool>) -> Result<HttpResponse, actix_web::Error> {
-    if let auth_handler::AuthToken::User(user) = logged_user{
+/// Prepare the DB for the next course, removes all the users, except the first admin
+pub async fn flush_users(
+    logged_user: auth_handler::AuthToken,
+    pool: web::Data<Pool>,
+) -> Result<HttpResponse, actix_web::Error> {
+    if let auth_handler::AuthToken::User(user) = logged_user {
         if user.role == "A" {
             web::block(move || flush_users_query(pool)).await??;
             return Ok(HttpResponse::Ok().finish());
         }
     }
-    
+
     Err(error::ServiceError::Unauthorized.into())
 }
 
-fn create_user_query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), error::ServiceError> {
+fn create_user_query(
+    user_data: UserData,
+    pool: web::Data<Pool>,
+) -> Result<(), error::ServiceError> {
     use crate::schema::users::dsl::users;
 
     let role = "T".to_string();
@@ -60,127 +75,150 @@ fn create_user_query(user_data: UserData, pool: web::Data<Pool>) -> Result<(), e
             use crate::schema::courses::dsl::*;
 
             for course in user_data.courses {
-                let mut course = course.split("-"); 
+                let mut course = course.split("-");
                 let level = course.next().unwrap();
                 let group = course.next().unwrap();
                 let subject = course.next().unwrap();
 
                 if subject == "anatomia" {
                     diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(anatomia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(anatomia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "english" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(english.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "biologia" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(biologia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "castellano" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(castellano.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "clasica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(clasica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "dibuix" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(dibuix.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "ed_fisica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(ed_fisica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "filosofia" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(filosofia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "fisica_quimica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(fisica_quimica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "frances" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(frances.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "historia" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(historia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "grec" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(grec.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "informatica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(informatica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "literatura" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(literatura.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "llati" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(llati.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "mates" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(mates.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "musica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(musica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "orientacio" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(orientacio.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "plastica" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(plastica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "religio" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(religio.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "tecnologia" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(tecnologia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else if subject == "valencia" {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(valencia.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
+                } else {
+                    diesel::update(courses)
+                        .filter(id.eq(level.to_owned() + "-" + group))
+                        .set(etica.eq(email.clone()))
+                        .execute(&mut conn)
+                        .unwrap();
                 }
-                else if subject == "english" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(english.eq(email.clone()))
-                    .execute(&mut conn).unwrap();
-                }
-                else if subject == "biologia" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(biologia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "castellano" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(castellano.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "clasica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(clasica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "dibuix" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(dibuix.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }else if subject == "ed_fisica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(ed_fisica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "filosofia" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(filosofia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "fisica_quimica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(fisica_quimica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "frances" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(frances.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "historia" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(historia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "grec" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(grec.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "informatica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(informatica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "literatura" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(literatura.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "llati" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(llati.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "mates" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(mates.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "musica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(musica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "orientacio" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(orientacio.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "plastica" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(plastica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "religio" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(religio.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "tecnologia" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(tecnologia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else if subject == "valencia" {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(valencia.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
-                else {
-                    diesel::update(courses)
-                    .filter(id.eq(level.to_owned() + "-" + group))
-                    .set(etica.eq(email.clone()))
-                    .execute(&mut conn).unwrap();                }
             }
 
             Ok(())
@@ -194,7 +232,9 @@ fn flush_users_query(pool: web::Data<Pool>) -> Result<(), crate::error::ServiceE
 
     let mut conn = pool.get()?;
 
-    diesel::delete(users).filter(email.ne("asengar2009@gmail.com")).execute(&mut conn)?;
+    diesel::delete(users)
+        .filter(email.ne("asengar2009@gmail.com"))
+        .execute(&mut conn)?;
 
     Ok(())
 }

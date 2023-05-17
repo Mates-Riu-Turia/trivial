@@ -4,18 +4,23 @@ use diesel::result::{DatabaseErrorKind, Error as DBError};
 use std::convert::From;
 use uuid::Error as ParseError;
 
+/// A Struct with the possible errors that the Trivial can generate
 #[derive(Debug, Display)]
 pub enum ServiceError {
+    /// This error is the equivalent to 500
     #[display(fmt = "Internal Server Error")]
     InternalServerError,
 
     #[display(fmt = "BadRequest: {}", _0)]
+    /// This is the error 400, it takes the reason of this error
     BadRequest(String),
 
     #[display(fmt = "Unauthorized")]
+    /// This is the error 401
     Unauthorized,
 
     #[display(fmt = "Redirect")]
+    /// The same as Unauthorized but it redirects to the login page (used when the user tries to access to a HTML that is protected)
     Redirect,
 }
 

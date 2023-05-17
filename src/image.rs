@@ -2,11 +2,13 @@ use crate::{auth_handler::AuthToken, error::ServiceError};
 use actix_multipart::form::{tempfile::TempFile, MultipartForm};
 use actix_web::{Error, HttpResponse, Responder};
 
+/// A struct for sending the image trough Multipart
 #[derive(Debug, MultipartForm)]
 pub struct UploadForm {
     file: TempFile,
 }
 
+/// Save the image in the images folder
 pub async fn save_file(
     MultipartForm(form): MultipartForm<UploadForm>,
     logged_user: AuthToken,
