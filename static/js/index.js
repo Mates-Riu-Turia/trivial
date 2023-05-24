@@ -11,11 +11,11 @@ function changePasswordVisibility(button, buttonNumber) {
 
   if (field.type == "password") {
     field.type = "text"
-    button.classList = "toogle-password bi bi-eye-slash"
+    button.classList = "toggle-password bi bi-eye-slash"
   }
   else {
     field.type = "password"
-    button.classList = "toogle-password bi bi-eye"
+    button.classList = "toggle-password bi bi-eye"
   }
 }
 
@@ -23,28 +23,28 @@ function modifyPassword() {
   let passwords = {
     password: document.forms["modifyPasswordForm"]["password"],
     passwordAgain: document.forms["modifyPasswordForm"]["passwordAgain"],
-    tooglePassword1: document.getElementById("toggle-password1").style,
-    tooglePassword2: document.getElementById("toggle-password2").style,
+    togglePassword1: document.getElementById("toggle-password1").style,
+    togglePassword2: document.getElementById("toggle-password2").style,
     modal: bootstrap.Modal.getInstance("#changePasswordModal"),
     reset: function () {
       this.password.classList = "form-control"
       this.passwordAgain.classList = "form-control"
-      this.tooglePassword1.right = "5%"
-      this.tooglePassword1.top = "25%"
-      this.tooglePassword2.right = "5%"
-      this.tooglePassword2.top = "25%"
+      this.togglePassword1.right = "5%"
+      this.togglePassword1.top = "25%"
+      this.togglePassword2.right = "5%"
+      this.togglePassword2.top = "25%"
     },
     verify: function () {
       if (this.password.value == "") {
         this.password.classList = "form-control is-invalid"
-        this.tooglePassword1.right = "15%"
-        this.tooglePassword1.top = "15%"
+        this.togglePassword1.right = "15%"
+        this.togglePassword1.top = "15%"
         return false
       }
       if (this.passwordAgain.value != this.password.value) {
         this.passwordAgain.classList = "form-control is-invalid"
-        this.tooglePassword2.right = "15%"
-        this.tooglePassword2.top = "15%"
+        this.togglePassword2.right = "15%"
+        this.togglePassword2.top = "15%"
         return false
       }
       return true
@@ -70,11 +70,15 @@ function modifyPassword() {
   }
 }
 
-function logout() {
-  fetch("/api/auth", {
+async function logout() {
+  let data = await fetch("/api/auth", {
     method: "DELETE",
+    headers: {
+      "Clear-Site-Data": "*"
+    }
   }
-  ).then(res => res.json()).then(res => window.location = "/login?status=sessionClosed")
+  );
+  window.location = "/login?status=sessionClosed"
 }
 
 function changePassword() {
@@ -91,7 +95,28 @@ function name(data) {
   if (data.User != undefined) {
     divElement2.innerHTML = data.User.name
     if (index_page) {
-      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/modify_question'"><i class="bi bi-pen"></i> <br>Modificar Pregunta</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/student_question'"><i class="bi bi-mortarboard"></i> <br>Preguntas de los Alumnos</button><button type="button" class="btn btn-outline-primary button-group-element" onclick="window.location = '/statics'"><i class="bi bi-bar-chart"></i> <br>Estadistica</button>`
+      div.innerHTML = `
+      <div class="button-group row mx-2">
+        <a type="button" class="btn btn-outline-primary button-group-element col-xxl-12 text-wrap mb-3" href="/add_question">
+          <i class="bi bi-plus-circle"></i><br>
+          Nueva Pregunta
+        </a>
+        <a type="button" class="btn btn-outline-primary button-group-element col-xxl-12 text-wrap mb-3"
+          href="/modify_question">
+          <i class="bi bi-pen"></i><br>
+          Modificar Pregunta
+        </a>
+        <a type="button" class="btn btn-outline-primary button-group-element col-xxl-12 text-wrap mb-3"
+          href="/student_question">
+          <i class="bi bi-mortarboard"></i><br>
+          Preguntas de los Alumnos
+        </a>
+        <a type="button" class="btn btn-outline-primary button-group-element col-xxl-12 text-wrap mb-3" href="/statics">
+          <i class="bi bi-bar-chart"></i><br>
+          Estadistica
+        </a>
+      </div>
+      `
       if (data.User.password_changed == false) {
         new bootstrap.Toast("#liveToast").show()
       }
@@ -106,37 +131,23 @@ function name(data) {
         document.getElementById("flushButton").classList = "dropdown-item d-flex align-items-center"
       }
 
-      resize()
+      
     }
   }
   else {
     divElement2.innerHTML = data.Guest.name
     if (index_page) {
       modifyPassword.style.cssText = "display: none !important;"
-      div.innerHTML = `<button onclick="window.location.href='/add_question'" type="button" class="btn btn-outline-primary button-group-element"><i class="bi bi-plus-circle"></i> <br>Nueva Pregunta</button>`
+      div.innerHTML = `
+        <div class="button-group row">
+          <a type="button" class="btn btn-outline-primary button-group-element col-xxl-12 text-wrap mb-3" href="/add_question">
+            <i class="bi bi-plus-circle"></i><br>
+            Nueva Pregunta
+          </a>
+        </div>
+      `
       divElement.innerHTML = "Bienvenido/a " + data.Guest.name
-      resize()
-    }
-  }
-}
-
-function resize_close() {
-  document.getElementById("alertSuccess").classList = "alert alert-success alert-dismissible fade d-none";
-  document.getElementById("alertError").classList = "alert alert-danger alert-dismissible fade d-none";
-  resize()
-}
-
-function resize() {
-  if (index_page) {
-    let divElement = document.getElementById("welcome");
-    let buttons = document.getElementsByClassName('button-group-element')
-    let buttons_array = Array.from(buttons)
-    let elemWidth = divElement.offsetWidth / buttons_array.length;
-    for (i = 0; i < buttons_array.length; i++) {
-      if (i != 0) {
-        buttons_array[i].style.marginLeft = elemWidth * i + "px"
-      }
-      buttons_array[i].style.width = elemWidth + "px"
+      
     }
   }
 }
@@ -156,7 +167,6 @@ function prepare() {
 
   if (url.pathname = "/") {
     index_page = true;
-    window.addEventListener('resize', () => resize(), false)
   }
 
   url = url.searchParams;

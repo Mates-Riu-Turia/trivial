@@ -3,11 +3,11 @@ function changePasswordVisibility(button) {
 
     if (field.type == "password") {
         field.type = "text"
-        button.classList = "bi bi-eye-slash"
+        button.classList = "bi bi-eye-slash toggle-password"
     }
     else {
         field.type = "password"
-        button.classList = "bi bi-eye"
+        button.classList = "bi bi-eye toggle-password"
     }
 }
 
@@ -85,7 +85,7 @@ function validateForm() {
     let user = {
         email: document.forms["loginForm"]["username"],
         password: document.forms["loginForm"]["password"],
-        pass_btn: document.getElementById("toggle-password").style,
+        pass_btn: document.getElementById("toggle-password-btn").style,
         guest: document.forms["loginForm"]["guest"].checked,
         modal: new bootstrap.Modal("#guestModal"),
         reset: function() {
@@ -135,7 +135,7 @@ function validateForm() {
     }).then((response) => {
         if (response.status == 401) {
             this.password.classList.add("is-invalid")
-            let pass_btn = document.getElementById("toggle-password").style;
+            let pass_btn = document.getElementById("toggle-password-btn").style;
             pass_btn.right = "15%";
             pass_btn.top = "15%";
         }

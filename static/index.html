@@ -14,7 +14,7 @@
     crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
   <!-- Custom css styles -->
-  <link href="static/css/index.css" rel="stylesheet">
+  <link href="static/css/style.css" rel="stylesheet">
   <script type="module" src="static/js/color-modes.js"></script>
   <script src="static/js/index.js"></script>
 </head>
@@ -22,7 +22,7 @@
 <body onload="prepare()">
   <!-- The header with the navbar -->
   <header>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top margin-bottom-100">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
           <img src="/favicon.ico" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
@@ -121,8 +121,8 @@
                       class="bi bi-box-arrow-right"></i>&nbsp;Cerrar sesión</button>
                 </li>
                 <li>
-                  <button id="flushButton" type="button" class="dropdown-item d-flex align-items-center d-none" onclick="flush_users()"><i
-                      class="bi bi-rocket-takeoff"></i>&nbsp;Limpiar usuarios</button>
+                  <button id="flushButton" type="button" class="dropdown-item d-flex align-items-center d-none"
+                    onclick="flush_users()"><i class="bi bi-rocket-takeoff"></i>&nbsp;Limpiar usuarios</button>
                 </li>
               </ul>
             </li>
@@ -137,17 +137,19 @@
     <div class="alert alert-success alert-dismissible fade d-none" role="alert" id="alertSuccess">
       <i class="bi bi-check-circle-fill"></i>
       <strong>¡Correcto!</strong> <span id="alertSuccessMessage"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="resize_close()"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+      ></button>
     </div>
 
     <!-- Error alert -->
     <div class="alert alert-danger alert-dismissible fade d-none" role="alert" id="alertError">
       <i class="bi bi-exclamation-triangle-fill"></i>
       <strong>¡Error!</strong> <span id="alertErrorMessage"></span>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="resize_close()"></button>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+        ></button>
     </div>
 
-    <h1 id="welcome"></h1>
+    <h1 id="welcome" class="text-center mb-3"></h1>
     <div id="button-group" class="button-group"></div>
 
     <!-- Change password modal -->
@@ -170,7 +172,7 @@
                     Introduzca una contraseña válida
                   </div>
                 </div>
-                <button id="toggle-password1" type="button" class="toogle-password bi bi-eye"
+                <button id="toggle-password1" type="button" class="toggle-password bi bi-eye"
                   aria-label="Show password as plain text. Warning: this will display your password on the screen."
                   onclick="changePasswordVisibility(this, 0)">
                 </button>
@@ -183,7 +185,7 @@
                     Las contraseñas no coinciden
                   </div>
                 </div>
-                <button id="toggle-password2" type="button" class="toogle-password bi bi-eye"
+                <button id="toggle-password2" type="button" class="toggle-password bi bi-eye"
                   aria-label="Show password as plain text. Warning: this will display your password on the screen."
                   onclick="changePasswordVisibility(this, 1)">
                 </button>
@@ -203,7 +205,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="sureModalLabel">Eliminar pregunta</h1>
+            <h1 class="modal-title fs-5" id="sureModalLabel">Reinicializar los cursos</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -216,7 +218,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Password not changed toast-->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">

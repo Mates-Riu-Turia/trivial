@@ -66,27 +66,15 @@ async fn publish_color_modes_js() -> Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
-#[get("/static/css/sign-in.css")]
-async fn publish_sign_in_css() -> Result<NamedFile> {
-    let path = PathBuf::from("static/css/sign-in.css");
-    Ok(NamedFile::open(path)?)
-}
-
 #[get("/static/js/sign-in.js")]
 async fn publish_sign_in_js() -> Result<NamedFile> {
     let path = PathBuf::from("static/js/sign-in.js");
     Ok(NamedFile::open(path)?)
 }
 
-#[get("/static/css/index.css")]
-async fn publish_index_css() -> Result<NamedFile> {
-    let path = PathBuf::from("static/css/index.css");
-    Ok(NamedFile::open(path)?)
-}
-
-#[get("/static/css/add_question.css")]
-async fn publish_add_question_css() -> Result<NamedFile> {
-    let path = PathBuf::from("static/css/add_question.css");
+#[get("/static/css/style.css")]
+async fn publish_style_css() -> Result<NamedFile> {
+    let path = PathBuf::from("static/css/style.css");
     Ok(NamedFile::open(path)?)
 }
 
@@ -199,10 +187,8 @@ async fn main() -> std::io::Result<()> {
             .service(publish_add_question_html)
             .service(publish_modify_question_html)
             .service(publish_color_modes_js)
-            .service(publish_sign_in_css)
             .service(publish_sign_in_js)
-            .service(publish_index_css)
-            .service(publish_add_question_css)
+            .service(publish_style_css)
             .service(publish_index_js)
             .service(publish_add_question_js)
             .service(publish_modify_question_js)
