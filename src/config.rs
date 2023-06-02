@@ -1,6 +1,12 @@
 use serde::Deserialize;
 use serde_big_array::BigArray;
 use std::{fs::File, io::Read, path::Path};
+use lazy_static::lazy_static;
+
+lazy_static! {
+    /// A wrapper for reading the configuration parameters everywhere in the code
+    pub static ref CONFIG: Config = Config::new("config.json");
+}
 
 /// The struct with the configuration parameters
 #[derive(Deserialize)]
@@ -14,6 +20,12 @@ pub struct Config {
     /// The key for signing the auth cookie
     #[serde(with = "BigArray")]
     pub cookie_key: [u8; 64],
+    /// The default user password
+    pub default_user_password: String,
+    /// The salt for generating user passwords
+    pub password_salt: String,
+    /// The secret key for generating user passwords
+    pub secret_key: String,
 }
 
 impl Config {

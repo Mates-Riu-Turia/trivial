@@ -7,6 +7,7 @@ use crate::util::hash_password;
 use crate::{
     auth_handler, error,
     models::{Pool, User},
+    config::CONFIG
 };
 /// UserData is used to extract data for creating a user from a post request by the client
 #[derive(Debug, Deserialize, Serialize)]
@@ -61,7 +62,7 @@ fn create_user_query(
     let role = "T".to_string();
 
     let mut conn = pool.get()?;
-    let password: String = hash_password("1777")?;
+    let password: String = hash_password(&CONFIG.default_user_password)?;
     let user = User::from(
         &user_data.name,
         &user_data.email.clone(),

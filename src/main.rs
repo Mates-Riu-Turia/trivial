@@ -4,7 +4,7 @@ use actix_web::{get, http::StatusCode, middleware, web, App, HttpServer, Result}
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::path::PathBuf;
-use trivial_packager::{auth_handler, config::Config, image, models, question, register_handler};
+use trivial_packager::{auth_handler, config::CONFIG, image, models, question, register_handler};
 
 #[get("/favicon.ico")]
 async fn publish_favicon() -> Result<NamedFile> {
@@ -122,9 +122,6 @@ async fn not_found() -> Result<NamedFile> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let config = Config::new("./config.json");
-    let config_copy = Config::new("./config.json");
-
     dotenv::dotenv().ok();
     std::env::set_var(
         "RUST_LOG",
@@ -133,7 +130,7 @@ async fn main() -> std::io::Result<()> {
     env_logger::init();
 
     // create db connection pool
-    let manager = ConnectionManager::<MysqlConnection>::new(config.db_url);
+    let manager = ConnectionManager::<MysqlConnection>::new(&CONFIG.db_url);
     let pool: models::Pool = r2d2::Pool::builder()
         .build(manager)
         .expect("Failed to create pool.");
@@ -145,10 +142,10 @@ async fn main() -> std::io::Result<()> {
             // enable logger
             .wrap(middleware::Logger::default())
             .wrap(IdentityService::new(
-                CookieIdentityPolicy::new(&config.cookie_key)
+                CookieIdentityPolicy::new(&CONFIG.cookie_key)
                     .name("auth")
                     .path("/")
-                    .domain(config.domain.clone())
+                    .domain(CONFIG.domain.clone())
                     .max_age(time::Duration::days(1))
                     .secure(false), // this can only be true if you have https
             ))
@@ -202,7 +199,7 @@ async fn main() -> std::io::Result<()> {
             .service(actix_files::Files::new("/images", "images").prefer_utf8(true))
             .default_service(web::route().to(not_found))
     })
-    .bind(format!("{}:{}", config_copy.domain, config_copy.port))?
+    .bind(format!("{}:{}", CONFIG.domain, CONFIG.port))?
     .run()
     .await
 }

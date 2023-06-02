@@ -158,6 +158,7 @@ function flush_users() {
 
 async function flush_users_sure() {
   await fetch("/api/add_user").ok
+  bootstrap.Modal("#sureModal").hide()
 }
 
 fetch("/api/auth").then((response) => response.json()).then((data) => (name(data)))
