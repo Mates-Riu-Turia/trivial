@@ -5,9 +5,10 @@ use serde::{Deserialize, Serialize};
 
 use crate::util::hash_password;
 use crate::{
-    auth_handler, error,
+    auth_handler,
+    config::CONFIG,
+    error,
     models::{Pool, User},
-    config::CONFIG
 };
 /// UserData is used to extract data for creating a user from a post request by the client
 #[derive(Debug, Deserialize, Serialize)]
@@ -53,6 +54,16 @@ pub async fn flush_users(
     Err(error::ServiceError::Unauthorized.into())
 }
 
+/// Creates the admin user with the password of the configuration file or if admin account created doesn't do anything
+pub async fn admin_user(pool: Pool) -> Result<(), error::ServiceError>{
+    web::block(|| create_user_query(UserData {
+        name: "Root Account".to_string(),
+        email: "root@root".to_string(),
+        gender: "B".to_string(),
+        courses: vec!()
+    }, web::Data::new(pool))).await.unwrap()
+}
+
 fn create_user_query(
     user_data: UserData,
     pool: web::Data<Pool>,
@@ -62,7 +73,15 @@ fn create_user_query(
     let role = "T".to_string();
 
     let mut conn = pool.get()?;
-    let password: String = hash_password(&CONFIG.default_user_password)?;
+
+    let password: String;
+    if user_data.email == "root@root" { 
+        password = hash_password(&CONFIG.root_password)?
+    }
+    else {
+        password = hash_password(&CONFIG.default_user_password)?
+    }
+
     let user = User::from(
         &user_data.name,
         &user_data.email.clone(),
@@ -234,7 +253,7 @@ fn flush_users_query(pool: web::Data<Pool>) -> Result<(), crate::error::ServiceE
     let mut conn = pool.get()?;
 
     diesel::delete(users)
-        .filter(email.ne("asengar2009@gmail.com"))
+        .filter(email.ne("root@root"))
         .execute(&mut conn)?;
 
     Ok(())

@@ -1,7 +1,7 @@
+use lazy_static::lazy_static;
 use serde::Deserialize;
 use serde_big_array::BigArray;
 use std::{fs::File, io::Read, path::Path};
-use lazy_static::lazy_static;
 
 lazy_static! {
     /// A wrapper for reading the configuration parameters everywhere in the code
@@ -26,6 +26,8 @@ pub struct Config {
     pub password_salt: String,
     /// The secret key for generating user passwords
     pub secret_key: String,
+    ///  The admin's default password
+    pub root_password: String,
 }
 
 impl Config {

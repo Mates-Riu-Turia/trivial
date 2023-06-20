@@ -7,7 +7,6 @@ use actix_web::{web, HttpResponse};
 use diesel::{insert_into, prelude::*};
 use serde::{Deserialize, Serialize};
 
-
 /// This enum holds the question sended by the client, the question can be from a teacher or from a guest
 #[derive(Debug, Deserialize, Serialize)]
 pub enum QuestionData {

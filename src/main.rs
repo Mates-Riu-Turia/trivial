@@ -135,6 +135,8 @@ async fn main() -> std::io::Result<()> {
         .build(manager)
         .expect("Failed to create pool.");
 
+    register_handler::admin_user(pool.clone()).await.unwrap();
+
     // Start http server
     HttpServer::new(move || {
         App::new()
