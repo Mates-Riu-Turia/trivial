@@ -55,13 +55,13 @@ pub async fn flush_users(
 }
 
 /// Creates the admin user with the password of the configuration file or if admin account created doesn't do anything
-pub async fn admin_user(pool: Pool) -> Result<(), error::ServiceError>{
-    web::block(|| create_user_query(UserData {
+pub async fn admin_user(pool: Pool) {
+    let _ = web::block(|| create_user_query(UserData {
         name: "Root Account".to_string(),
         email: "root@root".to_string(),
         gender: "B".to_string(),
         courses: vec!()
-    }, web::Data::new(pool))).await.unwrap()
+    }, web::Data::new(pool))).await;
 }
 
 fn create_user_query(
