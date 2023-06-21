@@ -1,7 +1,7 @@
 use crate::{
     auth_handler::AuthToken,
     error::ServiceError,
-    models::{Pool, Question, StudentQuestion},
+    models::{Pool, Question, StudentQuestion, AnswerFormat},
 };
 use actix_web::{web, HttpResponse};
 use diesel::{insert_into, prelude::*};
@@ -28,7 +28,7 @@ pub struct TeacherQuestionData {
     /// If true, doesn't show the correct answer if you failed the question
     pub hide: bool,
     /// A list with the possible answers
-    pub answers: String,
+    pub answer: AnswerFormat,
     /// The number of tries for a question, range between 1 and 3
     pub tries: i32,
     /// The amount of time for ansering, 30 seconds to 150 seconds
@@ -43,14 +43,17 @@ pub struct TeacherQuestionData {
 
 impl TeacherQuestionData {
     /// Converts the TeacherQuestionData to the Diesel Table format
-    pub fn to_question_model(self, creator: String) -> Question {
-        Question {
+    pub fn to_question_model(self, creator: String) -> Result<Question, ()> {
+        Ok(Question {
             id: 0,
             subject: self.subject,
             level: self.level,
             question: self.question,
             hide: self.hide,
-            answers: self.answers,
+            answer: match serde_json::to_value(self.answer) {
+                Ok(val) => val,
+                Err(_) => return Err(())
+            },
             tries: self.tries,
             time: self.time,
             image: self.image,
@@ -58,7 +61,7 @@ impl TeacherQuestionData {
             created_at: chrono::Local::now().naive_local(),
             verified: self.verified,
             creator,
-        }
+        })
     }
 }
 
@@ -70,7 +73,7 @@ pub struct StudentQuestionData {
     /// The question body
     pub question: String,
     /// A list with the possible answers
-    pub answers: String,
+    pub answer: AnswerFormat,
     /// The number of tries for a question, range between 1 and 3
     pub tries: i32,
     /// The amount of time for ansering, 30 seconds to 150 seconds
@@ -84,19 +87,22 @@ impl StudentQuestionData {
         course_creator: String,
         name_creator: String,
         subject: String,
-    ) -> StudentQuestion {
-        StudentQuestion {
+    ) -> Result<StudentQuestion, ()> {
+        Ok(StudentQuestion {
             id: 0,
             course_creator,
             name_creator,
             subject,
             level: self.level,
             question: self.question,
-            answers: self.answers,
+            answer: match serde_json::to_value(self.answer) {
+                Ok(val) => val,
+                Err(_) => return Err(())
+            },
             tries: self.tries,
             time: self.time,
             created_at: chrono::Local::now().naive_local(),
-        }
+        })
     }
 }
 
@@ -165,7 +171,10 @@ pub async fn new_question(
                     )
                     .into());
                 }
-                let question = question.to_question_model(auth_data.email);
+                let question = match question.to_question_model(auth_data.email) {
+                    Ok(question) => question,
+                    Err(_) => return Err(ServiceError::BadRequest("Error processing answer format".to_string()).into())
+                };
                 id = web::block(move || new_question_query(question, pool)).await??;
             } else {
                 return Err(
@@ -175,11 +184,14 @@ pub async fn new_question(
         }
         AuthToken::Guest(auth_data) => {
             if let QuestionData::Guest(question) = question {
-                let question = question.to_question_model(
+                let question = match question.to_question_model(
                     format!("{}-{}", auth_data.course, auth_data.class),
                     auth_data.name,
                     auth_data.subject,
-                );
+                ) {
+                    Ok(question) => question,
+                    Err(_) => return Err(ServiceError::BadRequest("Error processing answer format".to_string()).into())
+                };
                 web::block(move || new_student_question_query(question, pool)).await??;
             } else {
                 return Err(

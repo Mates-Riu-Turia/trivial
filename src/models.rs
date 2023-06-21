@@ -1,5 +1,4 @@
 #![allow(missing_docs)]
-
 use crate::schema::*;
 use diesel::{prelude::*, r2d2::ConnectionManager, MysqlConnection};
 use serde::{Deserialize, Serialize};
@@ -33,6 +32,22 @@ impl User {
     }
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct AnswerOption {
+    a: String,
+    b: String,
+    c: String,
+    d: String,
+    correct: String
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub enum AnswerFormat {
+    String(String),
+    Bool(bool),
+    Options(AnswerOption)
+}
+
 #[derive(Debug, Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = questions)]
 pub struct Question {
@@ -41,7 +56,7 @@ pub struct Question {
     pub level: i32,
     pub question: String,
     pub hide: bool,
-    pub answers: String,
+    pub answer: serde_json::Value,
     pub tries: i32,
     pub time: i32,
     pub image: String,
@@ -60,7 +75,7 @@ pub struct StudentQuestion {
     pub subject: String,
     pub level: i32,
     pub question: String,
-    pub answers: String,
+    pub answer: serde_json::Value,
     pub tries: i32,
     pub time: i32,
     pub created_at: chrono::NaiveDateTime,
