@@ -1,7 +1,5 @@
 // @generated automatically by Diesel CLI.
 
-#![allow(missing_docs)]
-
 diesel::table! {
     courses (id) {
         id -> Varchar,
@@ -38,7 +36,7 @@ diesel::table! {
         level -> Integer,
         question -> Varchar,
         hide -> Bool,
-        answers -> Varchar,
+        answer -> Json,
         tries -> Integer,
         time -> Integer,
         image -> Varchar,

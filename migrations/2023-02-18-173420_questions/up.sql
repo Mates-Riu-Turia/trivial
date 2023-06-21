@@ -4,7 +4,7 @@ CREATE TABLE questions (
     level INT(11) NOT NULL,
     question VARCHAR(500) NOT NULL,
     hide BOOLEAN NOT NULL,
-    answers VARCHAR(50) NOT NULL,
+    answer JSON NOT NULL,
     tries INT(11) NOT NULL,
     time INT(11) NOT NULL,
     image VARCHAR(100) NOT NULL,
